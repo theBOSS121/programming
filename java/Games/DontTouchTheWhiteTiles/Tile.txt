@@ -1,0 +1,22 @@
+package dontTouchTheWhiteTile;
+
+public class Tile {
+	
+	public int x,y;
+	public int animatedY;
+	public boolean black;
+	
+	public Tile(int x, int y, boolean black){
+		this.x = x;
+		this.y = y;
+		this.black = black;
+	}
+	
+	public boolean pointInTile(int x, int y){
+		int width = DontTouchWhiteTile.TILE_WIDTH;
+		int height = DontTouchWhiteTile.TILE_HEIGHT;
+		
+		return (x > this.x * width && x < this.x * width + width &&
+				y > this.y * height && y < this.y * height + height);
+	}
+}
