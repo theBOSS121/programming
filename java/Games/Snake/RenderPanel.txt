@@ -1,0 +1,70 @@
+package snake;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Point;
+
+import javax.swing.JPanel;
+
+@SuppressWarnings("serial")
+public class RenderPanel extends JPanel{
+	protected void paintComponent(Graphics g) {
+		Snake snake = Snake.snake;
+		String string = "score: "+snake.score+", Lenght: "+snake.tailLenght+
+					", Time: "+snake.time/16;
+		super.paintComponent(g);
+		g.setColor(Color.GREEN);
+		g.fillRect(0,0,805,670);
+		g.setColor(Color.BLUE);
+		for(Point point : snake.snakeParts){
+			g.fillRect(point.x* Snake.SCALE,point.y* Snake.SCALE,
+					Snake.SCALE, Snake.SCALE);
+		}	
+			g.fillRect(snake.head.x* Snake.SCALE,snake.head.y* Snake.SCALE,
+				Snake.SCALE, Snake.SCALE);
+		g.setColor(Color.RED);
+			g.fillRect(snake.cherry.x* Snake.SCALE,snake.cherry.y* Snake.SCALE,
+				Snake.SCALE, Snake.SCALE);
+		g.setColor(Color.BLACK);
+		if(!snake.poused && !snake.over){
+		g.setFont(new Font("Ariel",1, 30));
+		g.drawString(string, 10, 30);
+		}
+		if(snake.poused){
+			g.setColor(Color.BLACK);
+			g.setFont(new Font("Ariel",1, 60));
+			g.drawString("poused", 300, 150);
+			g.setFont(new Font("Ariel",1, 30));
+			g.drawString(string, 215, 210);
+			g.setFont(new Font("Ariel",1, 20));
+			g.drawString("press space to unmute",300, 240);
+			g.setFont(new Font("Ariel",1, 130));
+			g.drawString("Best score:",30, 400);
+			g.setFont(new Font("Ariel",1, 180));
+			g.drawString(""+snake.best,30, 540);
+		}
+		if(snake.over){
+			g.setColor(Color.BLACK);
+			g.setFont(new Font("Ariel",1, 120));
+			g.drawString("GAME OVER", 40, 200);
+			g.setFont(new Font("Ariel",1, 30));
+			g.drawString(string, 215, 240);
+			g.setFont(new Font("Ariel",1, 20));
+			g.drawString("press space to play again",285, 280);
+			if(snake.score>snake.best){
+				g.setFont(new Font("Ariel",1, 130));
+				g.drawString("New record:",30, 400);
+				g.setFont(new Font("Ariel",1, 180));
+				g.drawString(""+snake.score,30, 540);
+				
+			}else{
+				g.setFont(new Font("Ariel",1, 130));
+				g.drawString("Best score:",30, 400);
+				g.setFont(new Font("Ariel",1, 180));
+				g.drawString(""+snake.best,30, 540);
+			}
+			
+		}
+	}
+}

@@ -1,0 +1,154 @@
+package snake;
+
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Random;
+
+import javax.swing.JFrame;
+import javax.swing.Timer;
+
+public class Snake implements ActionListener, KeyListener {
+	
+	public JFrame jframe;
+	
+	public RenderPanel renderPanel = new RenderPanel();
+	
+	public static Snake snake;
+	
+	public Timer timer = new Timer(20, this);
+	
+	public ArrayList<Point> snakeParts = new ArrayList<Point>();
+	
+	public static final int UP = 0,DOWN = 1,LEFT = 2,RIGHT = 3, SCALE = 20;
+	
+	public int ticks = 0,direction = DOWN, score = 0, tailLenght, time;
+
+	int best = 0;
+	
+	public Point head,cherry;
+	
+	public Random random;
+	
+	public Dimension dim;
+	
+	public boolean over = false,poused;
+	
+	public Snake() {
+		dim = Toolkit.getDefaultToolkit().getScreenSize();
+		jframe = new JFrame("snake");
+		jframe.setVisible(true);
+		jframe.setSize(808,688);
+		//mogl bi bit false sam mi pol ucasih ne pobarva ekrana
+		//in ce spremenis velikost se pol pokaze
+		jframe.setResizable(false);
+		jframe.setLocation(dim.width/2-jframe.getWidth()/2,
+				dim.height/2-jframe.getHeight()/2);
+		jframe.add(renderPanel);
+		jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jframe.addKeyListener(this);
+		startGame();
+	}
+	
+	public void startGame(){
+		over = false;
+		poused = false;
+		if(score>best){
+			best = score;
+		}
+		score = 0;
+		time = 0;
+		ticks = 0;
+		tailLenght = 5;
+		random = new Random();
+		direction = random.nextInt(4);
+		head = new Point(random.nextInt(20)+10,
+				random.nextInt(16)+7);
+		snakeParts.clear();
+		cherry = new Point(random.nextInt(39),
+				random.nextInt(32));
+		timer.start();
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		renderPanel.repaint();
+		ticks++;
+		if(ticks%2 == 0 && head!=null && !over && !poused){
+			time++;
+			snakeParts.add(new Point(head.x,head.y));
+			if(direction == DOWN)
+				if(head.y+1<=32 && noTailAt(head.x, head.y+1))
+					head = new Point(head.x,head.y+1);
+				else
+					over = true;
+			if(direction == UP)
+				if(head.y-1>=0 && noTailAt(head.x, head.y-1))
+					head = new Point(head.x,head.y-1);
+				else
+					over = true;
+			if(direction == RIGHT)
+				if(head.x+1<=39 && noTailAt(head.x+1, head.y))
+					head = new Point(head.x+1,head.y);
+				else
+					over = true;
+			if(direction == LEFT)
+				if(head.x-1>=0 && noTailAt(head.x-1, head.y))
+					head = new Point(head.x-1,head.y);
+				else
+					over = true;
+			if(snakeParts.size() > tailLenght)
+				snakeParts.remove(0);
+			
+			if(cherry != null){
+				if(head.x == cherry.x && head.y == cherry.y){
+					score++;
+					tailLenght++;
+					cherry.setLocation(random.nextInt(39),
+							random.nextInt(32));
+				}
+			}
+		}
+	}
+	
+	private boolean noTailAt(int x, int y) {
+		for(Point point : snakeParts){
+			if(point.equals(new Point(x,y)))
+				return false;
+			
+		}
+		
+		return true;
+	}
+
+	public static void main(String[] args){
+		snake = new Snake();
+	}
+	
+	public void keyPressed(KeyEvent e) {
+		int i = e.getKeyCode();
+		if(i == KeyEvent.VK_A && direction!=RIGHT)
+			direction = LEFT;
+		if(i == KeyEvent.VK_D && direction!=LEFT)
+			direction = RIGHT;
+		if(i == KeyEvent.VK_S && direction!=UP)
+			direction = DOWN;
+		if(i == KeyEvent.VK_W && direction!=DOWN)
+			direction = UP;
+		if(i == KeyEvent.VK_SPACE)
+			if(over)
+			startGame();
+			else
+				poused =!poused;
+	}
+	
+	public void keyReleased(KeyEvent e) {
+	}
+	
+	public void keyTyped(KeyEvent e) {
+	}
+}
