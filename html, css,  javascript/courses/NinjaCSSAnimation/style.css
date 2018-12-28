@@ -1,0 +1,160 @@
+/* transformations */
+/* transform: translate(0px, 0px) */
+/* transform: scale(1.2, 0.2); */
+/* transform: rotateZ(20deg); */
+/* transform: rotateZ(20deg) translateY(200px) scale(2.3); */
+
+/* transition */
+/* first you define whan are you transitioning(optional if not it works for all changes) */
+/* first num is time of the transition */
+/* second num is delay */
+/* last parameter is how transition performs(linear, ease-in-out, ease-in, ease-out) */
+/* !!! this is not in hover but in normal example:!!!*/
+/* transition: background 1s, transform 0.4s 0.3s ease-in-out; */
+/* !!!in the hover are the changes example: !!!*/
+/* .circle:hover { */
+	/* background:salmon; */
+	/* transform: rotate(360deg); */
+/* } */
+
+/* animations*/
+/* examle1 */
+/* .mario { */
+	/* !not imortant! width:100px; !not imortant! */
+	/* !not imortant! position:absolute; !not imortant! */
+	/* !not imortant! top:-40px; !not imortant! */
+	/* !not imortant! left:0px; !not imortant! */
+	/* animation-name: drive; */
+	/* animation-duration:3s; */
+	/* (forwards-stays at the end, backwards-before start at the start position, both, none) */
+	/* animation-fill-mode: both; */
+	/* animation-delay:1s; */
+	/* how many times to repeate(num or infinite) */
+	/* animation-iteration-count: infinite; */
+	/* (reverse, alternate-forward,backward...) */
+	/* animation-direction:reverse; */
+	/* (ease-in, ease-out, ease-in-out, ease, linear or cubic-bezier()) */
+	/* animation-timing-function: cubic-bezier(0, 0.4, 0.2, 0.1); */
+	
+	/* short way  delay after duration*/
+	/* animation: name 50s linear 2s infinite reverse; */
+/* } */
+
+/* @keyframes drive { */
+	/* from { */
+		/* transform: translateX(200px); */
+	/* } */
+	/* to {		 */
+		/* transform: translateX(500px); */
+	/* } */
+/* } */
+
+/* @keyframes jump { */
+	/* 0% {top:-40px} */
+	/* 50%{top:-100px} */
+	/* 100%{top:-40px} */
+/* } */
+
+
+html, body {
+	height:100%;
+	width:100%;
+	overflow:hidden;
+	margin:0;
+}
+.grass, .sky, .road {
+	position:relative;
+}
+
+.sky {
+	height:40%;
+	background:skyblue;
+	
+}
+
+.grass {
+	height:30%;
+	background:seagreen;
+}
+
+.road {
+	height:30%;
+	background:dimgrey;
+	box-sizing:border-box;
+	border-top:10px solid grey;
+	border-bottom:10px solid grey;
+	width:100%;
+}	
+
+.lines {
+	box-sizing:border-box;
+	border: 5px dashed #fff;
+	height:0px;
+	width:100%;
+	position:absolute;
+	top:45%;
+}
+
+.mario {
+	width:100px;
+	position:absolute;
+	top:-40px;
+	left:0px;
+	animation: drive 2s both infinite linear, jump 0.3s 1.2s ease;
+}
+
+.luigi {
+	position:absolute;
+	top:40%;
+	left:0px;
+	width:100px;
+	animation-name: drive;
+	animation-duration:3s;
+	animation-fill-mode:both;
+	animation-iteration-count:infinite;
+}
+
+@keyframes drive {
+	from {
+		transform: translateX(-200px);
+	}
+	to {		
+		transform: translateX(1000px);
+	}
+}
+
+@keyframes jump {
+	0% {top:-40px}
+	50%{top:-100px}
+	100%{top:-40px}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

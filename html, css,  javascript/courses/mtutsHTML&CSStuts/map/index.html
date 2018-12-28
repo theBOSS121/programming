@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+	<title>Title</title>
+	<style type="text/css"> 
+		* {
+			margin:0;
+			padding:0;
+		}
+		
+		#map {
+			height:500px;
+			width:100%;
+		}
+	</style>
+</head>
+<body>
+
+	<div id="map"></div>
+
+	<script type="text/javascript"> 
+		function initMap() {
+			var location = {lat: 46.264576, lng: 14.603051};
+			var map = new google.maps.Map(document.getElementById("map"), { 
+				zoom: 15, 
+				center: location
+			});
+			var marker = new google.maps.Marker({
+				position: location,
+				map: map
+			});
+		}
+
+	</script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqYFAPrQYoJt5jbngWerhk0YKo1a3eGe0&callback=initMap" type="text/javascript"></script>
+
+</body>
+</html>
