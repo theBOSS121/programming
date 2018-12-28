@@ -1,0 +1,111 @@
+package com.chatroom;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import java.awt.GridLayout;
+
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import javax.swing.UIManager;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class Login extends JFrame {
+	private static final long serialVersionUID = 1L;
+	
+	private JPanel contentPane;
+	private JTextField txtName;
+	private JTextField txtAddress;
+	private JTextField txtPort;
+
+	public Login() {
+		
+		try{
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		setResizable(false);
+		setTitle("Login");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//setBounds(100, 100, 300, 380);
+		setSize(300,380);
+		setLocationRelativeTo(null);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		txtName = new JTextField();
+		txtName.setBounds(64, 63, 165, 20);
+		contentPane.add(txtName);
+		txtName.setColumns(10);
+		
+		JLabel lblNew = new JLabel("Name:");
+		lblNew.setBounds(131, 38, 31, 14);
+		contentPane.add(lblNew);
+		
+		txtAddress = new JTextField();
+		txtAddress.setBounds(64, 127, 165, 20);
+		contentPane.add(txtAddress);
+		txtAddress.setColumns(10);
+		
+		JLabel lblIpAddress = new JLabel("IP Address:");
+		lblIpAddress.setBounds(119, 102, 56, 14);
+		contentPane.add(lblIpAddress);
+		
+		txtPort = new JTextField();
+		txtPort.setColumns(10);
+		txtPort.setBounds(64, 200, 165, 20);
+		contentPane.add(txtPort);
+		
+		JLabel lblPort = new JLabel("Port:");
+		lblPort.setBounds(135, 175, 24, 14);
+		contentPane.add(lblPort);
+		
+		JLabel lblIAddresDesc = new JLabel("(eq. 192.168.0.2)");
+		lblIAddresDesc.setBounds(103, 150, 87, 14);
+		contentPane.add(lblIAddresDesc);
+		
+		JLabel lblPortDesc = new JLabel("(eq. 8192)");
+		lblPortDesc.setBounds(121, 223, 51, 14);
+		contentPane.add(lblPortDesc);
+		
+		JButton btnLogin = new JButton("login");
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String name = txtName.getText();
+				String address = txtAddress.getText();
+				int port = Integer.parseInt(txtPort.getText());
+				login(name,address,port);
+			}
+		});
+		btnLogin.setBounds(101, 281, 91, 23);
+		contentPane.add(btnLogin);
+	}
+	
+	private void login(String name, String address, int port) {
+		dispose();
+		new ClientWindow(name, address, port);
+	}
+	
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Login frame = new Login();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+}

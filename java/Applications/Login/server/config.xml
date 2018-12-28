@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Options</comment>
+<entry key="0userID">1</entry>
+<entry key="0port">61149</entry>
+<entry key="0sex">male</entry>
+<entry key="0phone">031832444</entry>
+<entry key="0address">127.0.0.1</entry>
+<entry key="0mail">luka.uranic12@gmail.com</entry>
+<entry key="0username">luka</entry>
+<entry key="0age">10-17</entry>
+<entry key="numberOfClients">1</entry>
+<entry key="0country">Slovenija</entry>
+<entry key="0password">pass</entry>
+</properties>
