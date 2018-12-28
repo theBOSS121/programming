@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <Spinner
+        android:id="@+id/spinner2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/iv" />
+
+    <ImageView
+        android:id="@+id/iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/ic_launcher" />
+
+    <SeekBar
+        android:id="@+id/sb2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/spinner2"
+        android:layout_below="@+id/tvProcenti" />
+
+    <TextView
+        android:id="@+id/tvProcenti"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/spinner2"
+        android:layout_marginLeft="15dp"
+        android:text="100 %"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</RelativeLayout>
