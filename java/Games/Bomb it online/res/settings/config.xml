@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Options</comment>
+<entry key="player">0</entry>
+<entry key="col2">255</entry>
+<entry key="col1">65280</entry>
+<entry key="scale">2</entry>
+<entry key="level">1</entry>
+</properties>
