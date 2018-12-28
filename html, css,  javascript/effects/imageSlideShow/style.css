@@ -1,0 +1,23 @@
+body {
+	margin:0;
+	padding:0;
+	background:#313131;
+}
+
+.slider {
+	width:1200px;
+	height:600px;
+	background: url(img/chicago.jpg);
+	margin: 100px auto;
+	animation: slide 20s infinite;
+}
+
+@keyframes slide {
+	33% {
+		background: url(img/la.jpg);
+	}66% {
+		background: url(img/ny.jpg);
+	}100% {
+		background: url(img/chicago.jpg);
+	}	
+}

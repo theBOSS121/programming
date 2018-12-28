@@ -1,0 +1,87 @@
+* {
+	font-family:sans-serif;
+	list-style:none;
+	padding:0;
+}
+
+body {
+	background:#333;
+}
+
+.skills {
+	width:500px;
+	margin:60px auto;
+	color:#fff;
+}
+
+.skills li {
+	margin:20px 0;
+}
+
+.bar {
+	background:#353b48;
+	display:block;
+	height:2px;
+	border:1px solid rgba(0, 0, 0, 0.3);
+	border-radius:3px;
+	overflow:hidden;
+	box-shadow:0 0 10px #2187e7b3;
+}
+
+.bar span {
+	height:2px;
+	float:left;
+	background:#2187e7;
+}
+
+.html {
+	width:90%;
+	animation:html 2s ease-in-out;
+}
+
+.css {
+	width:65%;
+	animation:css 2s ease-in-out;
+}
+
+.jquery {
+	width:50%;
+	animation:jquery 2s ease-in-out;
+}
+
+.javascript {
+	width:70%;
+	animation:javascript 2s ease-in-out;
+}
+
+@keyframes html {
+	0% {
+		width:0;
+	}100% {
+		width:90%;
+	}
+}
+
+@keyframes css {
+	0% {
+		width:0;
+	}100% {
+		width:65%;
+	}
+}
+
+@keyframes jquery {
+	0% {
+		width:0;
+	}100% {
+		width:50%;
+	}
+}
+
+@keyframes javascript {
+	0% {
+		width:0;
+	}100% {
+		width:70%;
+	}
+}

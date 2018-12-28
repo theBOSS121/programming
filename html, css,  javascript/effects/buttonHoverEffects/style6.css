@@ -1,0 +1,62 @@
+body {
+	margin:0;
+	padding:0;
+	background:#262626;
+}
+
+a {
+	position:absolute;
+	top:50%;
+	left:50%;
+	transform:translate(-50%, -50%);
+	width:180px;
+	height:50px;
+	background:#262626;
+	text-transform:uppercase;
+	text-align:center;
+	line-height:50px;
+	color:#ff0;
+	text-decoration:none;
+	font-size:20px;
+	font-family:verdana;
+	letter-spacing:4px;
+}
+
+a:before ,
+a:after ,
+span:before, 
+span:after {
+	content:'';
+	position:absolute;
+	width:10px;
+	height:10px;
+	background:#ff0;
+	transition:1s;
+	/* this line makes a difference, however you can also use other blend modes to achive the same effect */
+	mix-blend-mode:hue;
+}
+
+a:before {
+	top:-2px;
+	left:-2px;
+}
+a:after {
+	top:-2px;
+	right:-2px;
+}
+span:before {
+	bottom:-2px;
+	left:-2px;
+} 
+span:after {
+	bottom:-2px;
+	right:-2px;
+}
+
+a:hover:before ,
+a:hover:after ,
+a:hover span:before, 
+a:hover span:after {
+	width:calc(180px / 2);
+	height:calc(50px / 2);
+}

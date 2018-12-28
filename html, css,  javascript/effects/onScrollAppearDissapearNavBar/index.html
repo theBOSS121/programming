@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Title</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+	
+	<nav id="nav"> 
+		<ul> 
+			<li><a href="#">Home</a></li>
+			<li><a href="#">About</a></li>
+			<li><a href="#">Contact</a></li>
+		</ul>
+	</nav>
+
+	<div class="sec"> 
+	
+	</div>
+	
+	<div class="sec2"> 
+	
+	</div>
+	
+	<script type="text/javascript"> 
+		
+		var previous = window.pageYOffset;
+		
+		window.onscroll = function() {
+			var now = window.pageYOffset;
+			if(now <= previous) {
+				document.getElementById("nav").style.top = "0";
+			}else {
+				document.getElementById("nav").style.top ="-100px";
+			}
+			previous = window.pageYOffset;			
+		}
+		
+	</script>
+</body>
+</html>

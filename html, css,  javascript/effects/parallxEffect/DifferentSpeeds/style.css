@@ -1,0 +1,22 @@
+body {
+	margin:0;
+	background:url(bg.jpeg) fixed;
+	color:#fff;
+	/* position:fixed; */
+}
+
+.prlx-lyr1 {
+	position:fixed;
+	background:url(saw.png) no-repeat 200px 200px;
+	background-size: 200px 200px;
+	width:100%;
+	height:800px;
+}
+
+.prlx-lyr2 {
+	position:fixed;
+	background:url(saw.png) no-repeat 500px 300px;
+	background-size: 200px 200px;
+	width:100%;
+	height:1000px;
+}

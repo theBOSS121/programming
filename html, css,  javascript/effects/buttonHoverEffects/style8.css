@@ -1,0 +1,52 @@
+body {
+	margin:0;
+	padding:0;
+}
+
+a {
+	position:absolute;
+	top:50%;
+	left:50%;
+	transform:translate(-50%, -50%);
+	width:200px;
+	height:60px;
+	line-height:60px;
+	text-align:center;
+	border:2px solid #262626;
+	font-size:30px;
+	text-decoration:none;
+	text-transform:uppercase;
+	font-family:sans-serif;
+	color:#262626;
+	overflow:hidden;
+}
+
+a span {
+	display:inline-block;
+	transition:0.5s;
+}
+
+a span:nth-child(odd):before {
+	content: attr(data-text);
+	position:absolute;
+	transform:translateY(100%);
+}
+a span:nth-child(odd) {
+	transform:translateY(-100%);
+}
+a:hover span:nth-child(odd) {
+	transform:translateY(0);
+}
+
+a span:nth-child(even):before {
+	content: attr(data-text);
+	position:absolute;
+	transform:translateY(-100%);
+}
+
+a span:nth-child(even) {
+	transform:translateY(100%);
+}
+a:hover span:nth-child(even) {
+	transform:translateY(0);
+}

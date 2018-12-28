@@ -1,0 +1,52 @@
+body {
+	margin:0;
+	padding:0;
+	background:#262626;
+}
+
+a {
+	position:absolute;
+	top:50%;
+	left:50%;
+	transform:translate(-50%, -50%);
+	width:200px;
+	height:60px;
+	text-align:center;
+	line-height:60px;
+	text-decoration:none;
+	text-transform:uppercase;
+	color:#eccf00;
+	font-family:sans-serif;
+	letter-spacing:4px;
+	font-size:24px;
+	border:2px solid #eccf00;
+	overflow:hidden;
+}
+
+a span {
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+}
+
+/* !!! transition only works on hover and does not work on unhover !!! */
+
+a span:nth-child(1) {
+	transform:translateX(-100%);
+}
+
+a:hover span:nth-child(1) {
+	transform:translateX(0);
+	transition:0.5s;
+}
+
+a span:nth-child(2) {
+	transform:translateX(0);
+}
+
+a:hover span:nth-child(2) {
+	transform:translateX(100%);
+	transition:0.5s;
+}
