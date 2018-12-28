@@ -1,0 +1,156 @@
+headar fajli v igri snake:
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include <conio.h>
+#include<time.h>
+#include<ctype.h>
+#include <time.h>
+#include <windows.h>
+#include <process.h>
+
+
+za premiène tipke defajni:
+#define UP 72
+#define DOWN 80
+#define LEFT 75
+#define RIGHT 77
+
+
+2 naèina za nastaviti curzor po ekranu(konzoli):
+void gotoxy(int x, int y)
+{
+
+ COORD coord;
+
+ coord.X = x; //pomembno da je veliki X
+
+ coord.Y = y; //pomembno da je veliki Y
+
+ SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+
+}
+void GotoXY(int x, int y)
+{
+    HANDLE a;
+    COORD b;
+    fflush(stdout);
+    b.X = x;
+    b.Y = y;
+    a = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleCursorPosition(a,b);
+
+
+za "prikaz loading"
+void load(){
+    int r,q;
+    gotoxy(36,14);
+    printf("loading...");
+    gotoxy(30,15);
+    for(r=1;r<=20;r++){
+    for(q=0;q<=100000000;q++);
+    printf("%c",177);}
+    getch();
+}
+
+
+
+logika za konec pri igri kaèa:
+void ExitGame()
+{
+    int i,check=0;
+    for(i=4;i<length;i++)   //starts with 4 because it needs minimum 4 element to touch its own body
+    {
+        if(body[0].x==body[i].x&&body[0].y==body[i].y)
+        {
+            check++;    //check's value increases as the coordinates of head is equal to any other body coordinate
+        }
+        if(i==length||check!=0)
+            break;
+    }
+    if(head.x<=10||head.x>=70||head.y<=10||head.y>=30||check!=0)
+    {
+        life--;
+        if(life>=0)
+        {
+            head.x=25;
+            head.y=20;
+            bend_no=0;
+            head.direction=RIGHT;
+            Move();			//nazaj na tisto kjer je bilo
+        }
+        else
+        {
+            system("cls");
+            printf("All lives completed\nBetter Luck Next Time!!!\nPress any key to quit the game\n");
+            exit(0);
+        }
+    }
+}
+
+
+kako se naredi hrana po ekranu :
+void Food()
+{
+    if(head.x==food.x&&head.y==food.y)
+    {
+        length++;
+       // time_t a;	nevem zakaj je blo to!!! zdej mislm da je to isto kot
+       //a=time(0);    	nevem zakaj je blo to!!! srand(time(NULL)); da se
+       // srand(a);	nevem zakaj je blo to!!! pozicija hrane menja... 
+        food.x=rand()%70;
+        if(food.x<=10)
+            food.x+=11;
+        food.y=rand()%30;
+        if(food.y<=10)
+
+            food.y+=11;
+    }
+     else if(food.x==0) //needed!!! global variable are initialized with 0
+    {
+        food.x=rand()%70;
+        if(food.x<=10)
+            food.x+=11;
+        food.y=rand()%30;
+        if(food.y<=10)
+            food.y+=11;
+    }
+}
+
+
+kako narisati prostor in hrano v igri snake:
+void Boarder()
+{
+   system("cls");
+   int i;
+   GotoXY(food.x,food.y);   /*displaying food*/
+       printf("F");
+   for(i=10;i<71;i++)
+   {
+       GotoXY(i,10);
+           printf("!");
+       GotoXY(i,30);
+           printf("!");
+   }
+   for(i=10;i<31;i++)
+   {
+       GotoXY(10,i);
+           printf("!");
+       GotoXY(70,i);
+       printf("!");
+   }
+}
+
+
+kako narisati rezulat:(nism cis zih da dela v igri snake je bilo se ena funkcija score only)
+int Score()
+{
+   int score;
+   GotoXY(20,8);
+   score=length-5;
+   printf("SCORE : %d",(length-5));
+   score=length-5;
+   GotoXY(50,8);
+   printf("Life : %d",life);
+   return score;
+}

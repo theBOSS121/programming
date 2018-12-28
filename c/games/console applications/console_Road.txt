@@ -1,0 +1,250 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <windows.h>
+#include <time.h>
+int score;
+typedef struct{
+int x[20];
+int y;
+
+}senemy;
+
+typedef struct {
+int x;
+int y;
+}sme;
+
+void gameloop();
+void gotoxy(int x, int y);
+void printBoard();
+void premakniMe();
+void printMe(int x,int y);
+void makeEnemy();
+void premik(sme *me,char dir);
+void premakniOvire(senemy *enemy);
+void narisiOvire(senemy *enemy);
+
+void gotoxy(int x, int y){
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),coord);
+}
+
+void printBoard(){
+    int i;
+    for(i=2;i<78;i++){
+        gotoxy(i,2);
+        printf("%c",219);
+        gotoxy(i,55);
+        printf("%c",219);
+    }
+    for(i=2;i<56;i++){
+        gotoxy(1,i);
+        printf("%c",219);
+        gotoxy(78,i);
+        printf("%c",219);
+    }
+}
+
+void printMe(int x,int y){
+    gotoxy(x,y);
+    printf("%c",219);
+}
+
+void premik(sme *me,char dir){
+    if(dir=='a'){
+        me->x-=2;
+    }
+    if(dir=='d'){
+        me->x+=2;
+    }
+    if(dir=='w'){
+
+        me->y-=2;
+
+
+    }
+    if(dir=='s'){
+        me->y+=2;
+    }
+
+
+}
+
+void makeEnemy(senemy *enemy){
+    int i;
+    for(i=0;i<20;i++){
+    enemy->x[i] = (rand()%74)+2;
+    }
+    enemy->y = 1;
+}
+
+void premakniOvire(senemy *enemy){
+int i;
+if(enemy->y!=53){
+    enemy->y += 2;
+}else{
+    enemy->y = 3;
+    score++;
+}
+
+}
+
+void narisiOvire(senemy *enemy){
+int i;
+for(i=0;i<20;i++){
+    gotoxy(enemy->x[i],enemy->y);
+    printf("%c",219);
+    }
+}
+
+void gameloop(){
+    char key;
+    int i,a;
+    int j = 0;
+    int ena = 0;
+    int dva = 0;
+    int loopcount = 0;
+    sme me = {38,33};
+    senemy enemy[13];
+    for(i=0;i<13;i++){
+       makeEnemy(&enemy[i]);
+    }
+
+
+    while(1){
+
+        while(!kbhit()){
+                if(me.x<2 || me.x>76 || me.y<3 || me.y>53){
+                system("cls");
+                  for(i=0;i<100000000;i++){}
+                printf("G");
+                for(i=0;i<100000000;i++){}
+                printf("A");
+                for(i=0;i<100000000;i++){}
+                printf("M");
+                for(i=0;i<100000000;i++){}
+                printf("E");
+                for(i=0;i<100000000;i++){}
+                printf(" ");
+                printf("O");
+                for(i=0;i<100000000;i++){}
+                printf("V");
+                for(i=0;i<100000000;i++){}
+                printf("E");
+                for(i=0;i<100000000;i++){}
+                printf("R");
+                printf("\nyour score is:%d",score);
+                getch();
+                exit(1);
+                }
+            for(i=0;i<13;i++){
+                for(a=0;a<20;a++){
+                    if(me.x == enemy[i].x[a] && me.y == enemy[i].y){
+                        system("cls");
+                         for(i=0;i<100000000;i++){}
+                        printf("G");
+                        for(i=0;i<100000000;i++){}
+                        printf("A");
+                        for(i=0;i<100000000;i++){}
+                        printf("M");
+                        for(i=0;i<100000000;i++){}
+                        printf("E");
+                        for(i=0;i<100000000;i++){}
+                        printf(" ");
+                        printf("O");
+                        for(i=0;i<100000000;i++){}
+                        printf("V");
+                        for(i=0;i<100000000;i++){}
+                        printf("E");
+                        for(i=0;i<100000000;i++){}
+                        printf("R");
+                        printf("\nyour score is:%d",score);
+                        getch();
+                        exit(1);
+                    }
+                }
+
+            }
+
+            printBoard();
+            printMe(me.x, me.y);
+            for(i=0;i<j;i++){
+                narisiOvire(&enemy[i]);
+            }
+            if(loopcount%3 ==0){
+            for(i=0;i<j;i++){
+                if(i==4 || i==8 || i==9){
+                    for(a=0;a<20;a++)
+                    if(enemy[i].x[a]<77){
+                    enemy[i].x[a]+=2;
+                    }else{
+                    enemy[i].x[a] = 2;
+                    }
+                }
+                if(i==7 || i==11 || i==13){
+                    for(a=0;a<20;a++)
+                    if(enemy[i].x[a]>1){
+                    enemy[i].x[a]-=2;
+                    }else{
+                    enemy[i].x[a] = 76;
+                    }
+                }
+
+                if(i==0 || i==3 || i==10 || i==12){
+                    for(a=0;a<20;a++)
+                    if(enemy[i].x[a]<77){
+                    enemy[i].x[a]+=1;
+                    }else{
+                    enemy[i].x[a] = 2;
+                    }
+                }
+                if(i==1 || i==2 || i==5 || i==6 ){
+                    for(a=0;a<20;a++)
+                    if(enemy[i].x[a]>1){
+                    enemy[i].x[a]-=1;
+                    }else{
+                    enemy[i].x[a] = 76;
+                    }
+                }
+            }
+            }
+            if(loopcount%7 == 0){
+
+                me.y += 2;
+                if(loopcount%14== 0 && j!=13){
+                    j++;
+
+                }
+                for(i=0;i<j;i++){
+                    premakniOvire(&enemy[i]);
+
+                }
+            }
+
+
+
+
+            system("cls");
+            gotoxy(1,1);
+            printf("%d ",score);
+            loopcount++;
+        }
+        key = getch();
+        premik(&me,key);
+
+    }
+}
+
+
+int main(){
+srand(time(NULL));
+
+printf("\t\t\t\t     Hallo!!!\n\n\n\n\n\n\n\n\t\t\t      This is crossy road game\n\n\n\n\n\n\n\n\t\t\t\tmaximize the screen\n\n\n\n\n\n\n\n\t\t\t move with 'a','w','s' and 'd' keys");
+getch();
+system("cls");
+gameloop();
+return 0;
+}

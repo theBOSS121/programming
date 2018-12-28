@@ -1,0 +1,377 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <SDL2/SDL.h>
+
+typedef struct{
+int x,y;
+}Man;
+
+typedef struct{
+int x,y,xdir;
+float move;
+float move2;
+float ydir;
+}Ball;
+
+typedef struct{
+Man man;
+Man man2;
+Ball ball;
+}GameState;
+
+int processEvents(SDL_Window *window, GameState *game){
+
+SDL_Event event;
+int done = 0;
+
+while(SDL_PollEvent(&event)){
+        switch(event.type){
+        case SDL_WINDOWEVENT_CLOSE:
+            {
+                if(window){
+                    SDL_DestroyWindow(window);
+                    window = NULL;
+                }
+            }
+            break;
+        case SDL_KEYDOWN:
+            {
+                switch(event.key.keysym.sym)
+                    case SDLK_ESCAPE:
+                    {
+                        done = 1;
+                        break;
+                    }
+
+            }
+            break;
+        case SDL_QUIT:
+            {
+                done = 1;
+                break;
+            }
+        }
+    }
+    const uint8_t *state = SDL_GetKeyboardState(NULL);
+    if(state[SDL_SCANCODE_LEFT]){
+        if(game->ball.move <= 5){
+        game->man.x-=6;
+        }
+        else if(game->ball.move > 5){
+        game->man.x-=15;
+        }
+    }
+    if(state[SDL_SCANCODE_RIGHT]){
+        if(game->ball.move <= 5){
+        game->man.x+=6;
+        }
+        else if(game->ball.move > 5){
+        game->man.x+=15;
+        }
+    }
+
+
+    if(state[SDL_SCANCODE_A]){
+        if(game->ball.move <= 5){
+        game->man2.x-=6;
+        }
+        else if(game->ball.move > 5){
+        game->man2.x-=15;
+        }
+    }
+    if(state[SDL_SCANCODE_D]){
+        if(game->ball.move <= 5){
+        game->man2.x+=6;
+        }
+        else if(game->ball.move > 5){
+        game->man2.x+=15;
+        }
+
+    }
+
+
+    return done;
+}
+
+void doRender(SDL_Renderer *renderer, GameState *game){
+
+//draw beckround
+SDL_SetRenderDrawColor(renderer,0,0,0,255);
+SDL_RenderClear(renderer);
+//draw players
+SDL_SetRenderDrawColor(renderer,0,0,255,255);
+SDL_Rect rect = {game->man.x,game->man.y,150,20};
+SDL_RenderFillRect(renderer,&rect);
+SDL_SetRenderDrawColor(renderer,0,255,0,255);
+SDL_Rect rect2 = {game->man2.x,game->man2.y,150,20};
+SDL_RenderFillRect(renderer,&rect2);
+//draw ball
+SDL_SetRenderDrawColor(renderer,255,255,255,255);
+SDL_Rect rect3 = {game->ball.x,game->ball.y,20,20};
+SDL_RenderFillRect(renderer,&rect3);
+
+
+SDL_RenderPresent(renderer);
+}
+
+void gameOver(int done, SDL_Renderer *renderer){
+
+SDL_SetRenderDrawColor(renderer,0,0,0,255);
+SDL_RenderClear(renderer);
+//G
+SDL_SetRenderDrawColor(renderer,255,0,0,255);
+SDL_Rect rect = {10,10,20,300};
+SDL_RenderFillRect(renderer,&rect);
+SDL_Rect rect2 = {30,10,150,20};
+SDL_RenderFillRect(renderer,&rect2);
+SDL_Rect rect3 = {30,290,150,20};
+SDL_RenderFillRect(renderer,&rect3);
+SDL_Rect rect4 = {160,180,20,110};
+SDL_RenderFillRect(renderer,&rect4);
+SDL_Rect rect5 = {60,160,120,20};
+SDL_RenderFillRect(renderer,&rect5);
+//a
+SDL_Rect rect6 = {240,10,20,300};
+SDL_RenderFillRect(renderer,&rect6);
+SDL_Rect rect7 = {260,10,150,20};
+SDL_RenderFillRect(renderer,&rect7);
+SDL_Rect rect8 = {390,10,20,300};
+SDL_RenderFillRect(renderer,&rect8);
+SDL_Rect rect9 = {260,160,150,20};
+SDL_RenderFillRect(renderer,&rect9);
+//m
+SDL_Rect rec = {460,10,20,300};
+SDL_RenderFillRect(renderer,&rec);
+SDL_Rect rec2 = {460,10,150,20};
+SDL_RenderFillRect(renderer,&rec2);
+SDL_Rect rec3 = {600,10,20,300};
+SDL_RenderFillRect(renderer,&rec3);
+SDL_Rect rec4 = {530,10,20,150};
+SDL_RenderFillRect(renderer,&rec4);
+//e
+SDL_Rect rec6 = {700,10,20,300};
+SDL_RenderFillRect(renderer,&rec6);
+SDL_Rect rec7 = {700,10,150,20};
+SDL_RenderFillRect(renderer,&rec7);
+SDL_Rect rec8 = {700,160,150,20};
+SDL_RenderFillRect(renderer,&rec8);
+SDL_Rect rec9 = {700,290,150,20};
+SDL_RenderFillRect(renderer,&rec9);
+//o
+SDL_SetRenderDrawColor(renderer,20,100,40,255);
+SDL_Rect re = {10,330,20,100};
+SDL_RenderFillRect(renderer,&re);
+SDL_Rect re1 = {110,330,20,100};
+SDL_RenderFillRect(renderer,&re1);
+SDL_Rect re2 = {10,330,100,20};
+SDL_RenderFillRect(renderer,&re2);
+SDL_Rect re3 = {10,410,100,20};
+SDL_RenderFillRect(renderer,&re3);
+//v
+SDL_SetRenderDrawColor(renderer,20,100,40,255);
+SDL_Rect r4 = {150,330,20,40};
+SDL_RenderFillRect(renderer,&r4);
+SDL_Rect re5 = {170,360,20,40};
+SDL_RenderFillRect(renderer,&re5);
+SDL_Rect re6 = {190,390,20,40};
+SDL_RenderFillRect(renderer,&re6);
+SDL_Rect re7 = {230,330,20,40};
+SDL_RenderFillRect(renderer,&re7);
+SDL_Rect re8 = {210,360,20,40};
+SDL_RenderFillRect(renderer,&re8);
+//e
+SDL_Rect r6 = {280,330,20,100};
+SDL_RenderFillRect(renderer,&r6);
+SDL_Rect r7 = {280,330,100,20};
+SDL_RenderFillRect(renderer,&r7);
+SDL_Rect r8 = {280,370,100,20};
+SDL_RenderFillRect(renderer,&r8);
+SDL_Rect r9 = {280,410,100,20};
+SDL_RenderFillRect(renderer,&r9);
+//r
+SDL_Rect ra = {400,330,20,100};
+SDL_RenderFillRect(renderer,&ra);
+SDL_Rect rs = {420,370,70,20};
+SDL_RenderFillRect(renderer,&rs);
+SDL_Rect rd = {470,330,20,60};
+SDL_RenderFillRect(renderer,&rd);
+SDL_Rect rf = {420,330,70,20};
+SDL_RenderFillRect(renderer,&rf);
+SDL_Rect rg = {470,400,20,30};
+SDL_RenderFillRect(renderer,&rg);
+SDL_Rect rh = {465,390,20,20};
+SDL_RenderFillRect(renderer,&rh);
+
+SDL_RenderPresent(renderer);
+}
+
+void check(GameState *game){
+
+if(game->man2.x > 1020-150){
+game->man2.x = 1020-150;
+}
+if(game->man.x >1020-150){
+game->man.x = 1020-150;
+}
+if(game->man2.x < 0){
+game->man2.x = 0;
+}
+if(game->man.x < 0){
+game->man.x = 0;
+}
+
+}
+
+
+
+
+int detect(GameState *game){
+
+
+int i,j;
+int found = 0;
+
+    for(j=0;j<150;j++){
+        for(i=0;i<20;i++){
+            if((game->ball.x)+i == (game->man.x)+j && game->ball.y < (game->man.y+20) && (game->man.y)+10 < game->ball.y){
+                    if(j<20){
+                            if(game->ball.move < 3){
+                                game->ball.xdir = -2;
+                            }else if(game->ball.move < 5){
+                                game->ball.xdir = -4;
+                            }else if(game->ball.move < 7){
+                                game->ball.xdir = -6;
+                            }else if(game->ball.move < 9){
+                                game->ball.xdir = -8;
+                            }
+                    }
+
+                    if(j>130 && j<150){
+                            if(game->ball.move < 3){
+                                game->ball.xdir = 2;
+                            }else if(game->ball.move < 5){
+                                game->ball.xdir = 4;
+                            }else if(game->ball.move < 7){
+                                game->ball.xdir = 6;
+                            }else if(game->ball.move < 9){
+                                game->ball.xdir = 8;
+                            }
+                    }
+
+                    game->ball.ydir = game->ball.move;
+                    found = 1;
+                    break;
+            }
+            if((game->ball.x)+i == (game->man2.x)+j && (game->ball.y)+20 > game->man2.y && (game->man2.y)-10 > game->ball.y){
+                    if(j<20){
+                            if(game->ball.move < 3){
+                                game->ball.xdir = -2;
+                            }else if(game->ball.move < 5){
+                                game->ball.xdir = -4;
+                            }else if(game->ball.move < 7){
+                                game->ball.xdir = -6;
+                            }else if(game->ball.move < 9){
+                                game->ball.xdir = -8;
+                            }
+                    }
+
+                    if(j>130 && j<150){
+                            if(game->ball.move < 3){
+                                game->ball.xdir = 2;
+                            }else if(game->ball.move < 5){
+                                game->ball.xdir = 4;
+                            }else if(game->ball.move < 7){
+                                game->ball.xdir = 6;
+                            }else if(game->ball.move < 9){
+                                game->ball.xdir = 8;
+                            }
+                    }
+
+                    game->ball.ydir = game->ball.move2;
+                    found = 1;
+                    break;
+            }
+        }
+
+}
+
+return found;
+}
+
+void moveBall(GameState *game){
+
+if(game->ball.x > 1000 || game->ball.x < 0){
+game->ball.xdir *=-1;
+}
+game->ball.x+=game->ball.xdir;
+
+game->ball.y+=game->ball.ydir;
+}
+
+int main ( int argc, char *argv[] ){
+srand(time(NULL));
+GameState gameState;
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
+
+SDL_Init(SDL_INIT_VIDEO);
+
+gameState.man.x = 510-75;
+gameState.man.y = 30;
+
+gameState.man2.x = 510-75;
+gameState.man2.y = 650;
+
+gameState.ball.x = 510-10;
+gameState.ball.y = 350-10;
+gameState.ball.xdir = 2;
+gameState.ball.ydir = 2.0;
+gameState.ball.move = 2.0;
+gameState.ball.move2 = -2.0;
+
+
+
+window = SDL_CreateWindow("Pong game",SDL_WINDOWPOS_UNDEFINED,20,1020,700,0);
+renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+
+
+int done = 0;
+while(!done){
+check(&gameState);
+doRender(renderer, &gameState);
+if(processEvents(window, &gameState)==1){
+    done = 1;
+}
+int found = detect(&gameState);
+if(found == 1){
+    gameState.ball.move += 0.2;
+    gameState.ball.move2 -= 0.2;
+    found = 0;
+}
+moveBall(&gameState);
+
+if(gameState.ball.y < 0){
+    printf("green win");
+    done = 2;
+}
+if(gameState.ball.y > 680){
+    printf("blue win");
+    done = 3;
+}
+}
+if(done == 1){
+printf("you left");
+}
+if(done >1 ){
+gameOver(done,renderer);
+SDL_Delay(2000);
+}
+SDL_DestroyWindow(window);
+SDL_DestroyRenderer(renderer);
+SDL_Quit();
+getch();
+  return 0;
+}
+

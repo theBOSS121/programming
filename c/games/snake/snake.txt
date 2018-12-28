@@ -1,0 +1,291 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <SDL2/SDL.h>
+#define RIGHT 0
+#define LEFT 1
+#define UP 2
+#define DOWN 3
+
+typedef struct{
+int x;
+int y;
+int dir;
+int premik;
+}Snake;
+
+typedef struct{
+int x;
+int y;
+int dir;
+int premik;
+}Body;
+
+typedef struct{
+int x;
+int y;
+}Food;
+
+typedef struct{
+Snake snake;
+Food food;
+Body body[300];
+}GameState;
+
+int length = 2;
+
+
+//zaznava gumbe in caka ce bo pritisnen krizec za zepretiokno ali pa esc key
+int processEvents(SDL_Window *window, GameState *game,int dirchanged){
+SDL_Event event;
+int done = 0;
+while(SDL_PollEvent(&event)){
+        switch(event.type){
+        case SDL_WINDOWEVENT_CLOSE:
+            {
+                if(window){
+                    SDL_DestroyWindow(window);
+                    window = NULL;
+                }
+            }
+            break;
+        case SDL_KEYDOWN:
+            {
+                switch(event.key.keysym.sym)
+                    case SDLK_ESCAPE:
+                    {
+                        done = 1;
+                        break;
+                    }
+
+            }
+            break;
+        case SDL_QUIT:
+            {
+                done = 1;
+                break;
+            }
+        }
+
+}
+if(dirchanged==0){
+    const uint8_t *state = SDL_GetKeyboardState(NULL);
+    if(state[SDL_SCANCODE_LEFT]){
+        if(game->snake.dir!=RIGHT)
+        game->snake.dir =LEFT;
+        done=2;
+    }
+    if(state[SDL_SCANCODE_RIGHT]){
+        if(game->snake.dir!=LEFT)
+        game->snake.dir =RIGHT;
+        done=2;
+    }
+    if(state[SDL_SCANCODE_UP]){
+        if(game->snake.dir!=DOWN)
+        game->snake.dir =UP;
+        done=2;
+    }
+    if(state[SDL_SCANCODE_DOWN]){
+        if(game->snake.dir!=UP)
+        game->snake.dir =DOWN;
+        done=2;
+    }
+}
+    return done;
+}
+//rise igro
+void doRender(SDL_Renderer *renderer, GameState *game){
+    //draw beckround
+    SDL_SetRenderDrawColor(renderer,255,255,250,255);
+    SDL_RenderClear(renderer);
+    //draw snake head
+    SDL_SetRenderDrawColor(renderer,0,0,255,255);
+    SDL_Rect rect = {game->snake.x,game->snake.y,29,29};
+    SDL_RenderFillRect(renderer,&rect);
+    //draw body
+    int i;
+    for(i=0;i<300;i++){
+    SDL_SetRenderDrawColor(renderer,0,255,0,255);
+    SDL_Rect rect = {game->body[i].x,game->body[i].y,29,29};
+    SDL_RenderFillRect(renderer,&rect);
+    }
+    //draw food
+    SDL_SetRenderDrawColor(renderer,255,0,0,255);
+    SDL_Rect food = {game->food.x,game->food.y,29,29};
+    SDL_RenderFillRect(renderer,&food);
+    //narise na window
+    SDL_RenderPresent(renderer);
+}
+
+void initGame(GameState *game){
+    game->snake.x = 30;
+    game->snake.y = 6*30;
+    game->snake.dir = RIGHT;
+    game->snake.premik = 30;
+
+    game->food.x = 15*30;
+    game->food.y = 12*30;
+    int i;
+    game->body[0].x = game->snake.x-30;
+    game->body[0].y = game->snake.y;
+    game->body[0].dir = game->snake.dir;
+    game->body[0].premik = game->snake.premik;
+    game->body[1].x = game->body[0].x-30;
+    game->body[1].y = game->body[0].y;
+    game->body[1].dir = game->body[0].dir;
+    game->body[1].premik = game->body[0].premik;
+    for(i=length;i<300;i++){
+    game->body[i].x = -30;
+    game->body[i].y = -30;
+    game->body[i].dir = -1;
+    game->body[i].premik = game->snake.premik;
+    }
+}
+
+void premakniSnake(GameState *game){
+    if(game->snake.dir == RIGHT){
+        game->snake.x += game->snake.premik;
+    }
+    if(game->snake.dir == LEFT){
+        game->snake.x -= game->snake.premik;
+    }
+    if(game->snake.dir == DOWN){
+        game->snake.y += game->snake.premik;
+    }
+    if(game->snake.dir == UP){
+        game->snake.y -= game->snake.premik;
+    }
+    int i;
+        for(i=300;i>1;i--){
+        if(length>i){
+        game->body[i].x = game->body[i-1].x;
+        game->body[i].y = game->body[i-1].y;
+        }
+        }
+        game->body[1].x = game->body[0].x;
+        game->body[1].y = game->body[0].y;
+        if(game->snake.dir==RIGHT){
+        game->body[0].x = game->snake.x-30;
+        game->body[0].y = game->snake.y;
+        }
+        if(game->snake.dir==LEFT){
+        game->body[0].x = game->snake.x+30;
+        game->body[0].y = game->snake.y;
+        }
+        if(game->snake.dir==UP){
+        game->body[0].x = game->snake.x;
+        game->body[0].y = game->snake.y+30;
+        }
+        if(game->snake.dir==DOWN){
+        game->body[0].x = game->snake.x;
+        game->body[0].y = game->snake.y-30;
+        }
+        if(game->snake.x<0){
+            game->snake.x = 570;
+        }
+        if(game->snake.x>570){
+            game->snake.x = 0;
+        }
+        if(game->snake.y<0){
+            game->snake.y = 570;
+        }
+        if(game->snake.y>570){
+            game->snake.y = 0;
+        }
+
+
+
+}
+
+int collision(GameState *game,int *speed,int time){
+int i;
+int correct = 0;
+if(game->snake.x==game->food.x &&game->snake.y==game->food.y){
+    do{
+    game->food.x = (rand()%19)*30;
+    game->food.y = (rand()%19)*30;
+    correct = 1;
+    for(i=0;i<300;i++){
+    if(game->food.x==game->body[i].x && game->food.y==game->body[i].y){
+        correct = 0;
+        break;
+    }
+    }
+    }while(correct!=1);
+    if(*speed > 7){
+        (*speed)--;
+    }
+    length++;
+        if(game->body[length-1].dir==RIGHT){
+        game->body[length].x = game->body[length-1].x-30;
+        game->body[length].y = game->body[length-1].y;
+        }
+        if(game->body[length-1].dir==LEFT){
+        game->body[length].x = game->body[length-1].x+30;
+        game->body[length].y = game->body[length-1].y;
+        }
+        if(game->body[length-1].dir==UP){
+        game->body[length].x = game->body[length-1].x;
+        game->body[length].y = game->body[length-1].y+30;
+        }
+        if(game->body[length-1].dir==DOWN){
+        game->body[length].x = game->body[length-1].x;
+        game->body[length].y = game->body[length-1].y-30;
+        }
+        game->body[length].dir = game->body[length-1].dir;
+}
+int done = 0;
+
+    for(i=0;i<300;i++){
+        if(game->snake.x == game->body[i].x && game->snake.y == game->body[i].y){
+            done = 2;
+        }
+    }
+return done;
+}
+
+int main ( int argc, char *argv[] ){
+srand(time(NULL));
+int done = 0;
+int time = 0;
+int speed = 20;
+int dirchanged = 0;
+GameState game;
+initGame(&game);
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
+SDL_Init(SDL_INIT_VIDEO);
+window = SDL_CreateWindow("snake",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,600,600,0);
+renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+while(!done){
+done = processEvents(window,&game,dirchanged);
+if(done==2){
+    done = 0;
+    dirchanged = 1;
+}
+doRender(renderer,&game);
+if(time%(speed)==0){
+premakniSnake(&game);
+done = collision(&game,&speed,time);
+dirchanged = 0;
+
+}
+time++;
+}
+
+SDL_DestroyWindow(window);
+SDL_DestroyRenderer(renderer);
+SDL_Quit();
+system("cls");
+printf("your score is:%d",length);
+printf("\n\ndo you want to play again y/n");
+char key = getch();
+if(key=='y'){
+length = 2;
+main(0,0);
+}
+
+  return 0;
+}
+

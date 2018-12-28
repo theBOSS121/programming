@@ -1,0 +1,1289 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <SDL2/SDL.h>
+
+typedef struct{
+int y;
+int x;
+int onboard;
+}Kmet;
+
+typedef struct{
+int y;
+int x;
+int onboard;
+int moved;
+}Kralj;
+
+typedef struct{
+int y;
+int x;
+int onboard;
+}Kraljica;
+
+typedef struct{
+int y;
+int x;
+int onboard;
+int moved;
+}Trdnjava;
+
+typedef struct{
+int y;
+int x;
+int onboard;
+}Konj;
+
+typedef struct{
+int y;
+int x;
+int onboard;
+}Laufar;
+
+typedef struct{
+Kmet bkmetje[8];
+Kmet ckmetje[8];
+Kralj bkralj;
+Kralj ckralj;
+Kraljica bkraljica[9];
+Kraljica ckraljica[9];
+Trdnjava btrdnjava[2];
+Trdnjava ctrdnjava[2];
+Konj bkonj[2];
+Konj ckonj[2];
+Laufar blaufar[2];
+Laufar claufar[2];
+}GameState;
+
+
+//zaznava gumbe in caka ce bo pritisnen krizec za zepretiokno ali pa esc key
+int processEvents(SDL_Window *window, GameState *game){
+SDL_Event event;
+int done = 0;
+while(SDL_PollEvent(&event)){
+        switch(event.type){
+        case SDL_WINDOWEVENT_CLOSE:
+            {
+                if(window){
+                    SDL_DestroyWindow(window);
+                    window = NULL;
+                }
+            }
+            break;
+        case SDL_KEYDOWN:
+            {
+                switch(event.key.keysym.sym)
+                    case SDLK_ESCAPE:
+                    {
+                        done = 1;
+                        break;
+                    }
+
+            }
+            break;
+        case SDL_QUIT:
+            {
+                done = 1;
+                break;
+            }
+        }
+
+}
+    return done;
+}
+//rise igro
+void doRender(SDL_Renderer *renderer, GameState *game){
+int i,j = 0;
+//draw board
+SDL_SetRenderDrawColor(renderer,255,255,250,255);
+SDL_RenderClear(renderer);
+for(j=0;j<8;j++){
+    for(i=0;i<8;i++){
+        if(j%2==0){
+            if(i%2==0){
+                continue;
+            }
+        }
+        if(j%2==1){
+            if(i%2==1){
+                continue;
+            }
+        }
+        SDL_SetRenderDrawColor(renderer,125,78,41,255);
+        SDL_Rect rect = {i*87.5,j*87.5,87.5,87.5};
+        SDL_RenderFillRect(renderer,&rect);
+
+    }
+}
+//kmetje
+for(i=0;i<8;i++){
+    if(game->bkmetje[i].onboard==1){
+        SDL_SetRenderDrawColor(renderer,215,215,215,255);
+        SDL_Rect rect = {(game->bkmetje[i].x)*87.5-57,(game->bkmetje[i].y)*87.5-57,30,30};
+        SDL_RenderFillRect(renderer,&rect);
+    }
+    if(game->ckmetje[i].onboard==1){
+        SDL_SetRenderDrawColor(renderer,0,0,0,255);
+        SDL_Rect rect1 = {(game->ckmetje[i].x)*87.5-52,(game->ckmetje[i].y)*87.5-52,20,20};
+        SDL_RenderFillRect(renderer,&rect1);
+    }
+}
+//kralja
+if(game->bkralj.onboard==1){
+        SDL_SetRenderDrawColor(renderer,0,0,255,255);
+        SDL_Rect rect = {(game->bkralj.x)*87.5-57,(game->bkralj.y)*87.5-57,30,30};
+        SDL_RenderFillRect(renderer,&rect);
+}
+if(game->ckralj.onboard==1){
+        SDL_SetRenderDrawColor(renderer,0,0,255,255);
+        SDL_Rect rect1 = {(game->ckralj.x)*87.5-52,(game->ckralj.y)*87.5-52,20,20};
+        SDL_RenderFillRect(renderer,&rect1);
+}
+//kraljici
+for(i=0;i<9;i++){
+if(game->bkraljica[i].onboard==1){
+        SDL_SetRenderDrawColor(renderer,0,255,0,255);
+        SDL_Rect rect2 = {(game->bkraljica[i].x)*87.5-57,(game->bkraljica[i].y)*87.5-57,30,30};
+        SDL_RenderFillRect(renderer,&rect2);
+}
+if(game->ckraljica[i].onboard==1){
+        SDL_SetRenderDrawColor(renderer,0,255,0,255);
+        SDL_Rect rect3 = {(game->ckraljica[i].x)*87.5-52,(game->ckraljica[i].y)*87.5-52,20,20};
+        SDL_RenderFillRect(renderer,&rect3);
+}
+}
+//trdnjava
+for(i=0;i<2;i++){
+    if(game->btrdnjava[i].onboard==1){
+        SDL_SetRenderDrawColor(renderer,255,0,0,255);
+        SDL_Rect rect0 = {(game->btrdnjava[i].x)*87.5-57,(game->btrdnjava[i].y)*87.5-57,30,30};
+        SDL_RenderFillRect(renderer,&rect0);
+    }
+    if(game->ctrdnjava[i].onboard==1){
+        SDL_SetRenderDrawColor(renderer,255,0,0,255);
+        SDL_Rect rect1 = {(game->ctrdnjava[i].x)*87.5-52,(game->ctrdnjava[i].y)*87.5-52,20,20};
+        SDL_RenderFillRect(renderer,&rect1);
+    }
+}
+//konja
+for(i=0;i<2;i++){
+    if(game->bkonj[i].onboard==1){
+        SDL_SetRenderDrawColor(renderer,220,220,110,255);
+        SDL_Rect rect0 = {(game->bkonj[i].x)*87.5-57,(game->bkonj[i].y)*87.5-57,30,30};
+        SDL_RenderFillRect(renderer,&rect0);
+    }
+    if(game->ckonj[i].onboard==1){
+        SDL_SetRenderDrawColor(renderer,220,220,110,255);
+        SDL_Rect rect1 = {(game->ckonj[i].x)*87.5-52,(game->ckonj[i].y)*87.5-52,20,20};
+        SDL_RenderFillRect(renderer,&rect1);
+    }
+}
+//lavfarja
+for(i=0;i<2;i++){
+    if(game->blaufar[i].onboard==1){
+        SDL_SetRenderDrawColor(renderer,220,110,250,255);
+        SDL_Rect rect0 = {(game->blaufar[i].x)*87.5-57,(game->blaufar[i].y)*87.5-57,30,30};
+        SDL_RenderFillRect(renderer,&rect0);
+    }
+    if(game->claufar[i].onboard==1){
+        SDL_Rect rect1 = {(game->claufar[i].x)*87.5-52,(game->claufar[i].y)*87.5-52,20,20};
+        SDL_RenderFillRect(renderer,&rect1);
+    }
+}
+
+SDL_RenderPresent(renderer);
+}
+
+void initGame(GameState *game){
+int i;
+for(i=0;i<8;i++){
+    game->ckmetje[i].y = 2;
+    game->bkmetje[i].y = 7;
+    game->ckmetje[i].x = i+1;
+    game->bkmetje[i].x = i+1;
+    game->bkmetje[i].onboard = 1;
+    game->ckmetje[i].onboard = 1;
+}
+    game->ckralj.x = 5;
+    game->ckralj.y = 1;
+    game->bkralj.x = 5;
+    game->bkralj.y = 8;
+    game->bkralj.onboard = 1;
+    game->ckralj.onboard = 1;
+    game->bkralj.moved = 0;
+    game->ckralj.moved = 0;
+
+    game->ckraljica[0].x = 4;
+    game->ckraljica[0].y = 1;
+    game->bkraljica[0].x = 4;
+    game->bkraljica[0].y = 8;
+    game->bkraljica[0].onboard = 1;
+    game->ckraljica[0].onboard = 1;
+    for(i=1;i<9;i++){
+    game->ckraljica[i].x = 0;
+    game->ckraljica[i].y = -8;
+    game->bkraljica[i].x = 0;
+    game->bkraljica[i].y = -8;
+    game->bkraljica[i].onboard = 0;
+    game->ckraljica[i].onboard = 0;
+    }
+
+    game->ctrdnjava[0].x = 1;
+    game->ctrdnjava[0].y = 1;
+    game->btrdnjava[0].x = 1;
+    game->btrdnjava[0].y = 8;
+    game->ctrdnjava[1].x = 8;
+    game->ctrdnjava[1].y = 1;
+    game->btrdnjava[1].x = 8;
+    game->btrdnjava[1].y = 8;
+    game->btrdnjava[1].onboard = 1;
+    game->ctrdnjava[1].onboard = 1;
+    game->btrdnjava[0].onboard = 1;
+    game->ctrdnjava[0].onboard = 1;
+    game->ctrdnjava[0].moved = 0;
+    game->btrdnjava[0].moved = 0;
+    game->ctrdnjava[1].moved = 0;
+    game->btrdnjava[1].moved = 0;
+
+    game->ckonj[0].x = 2;
+    game->ckonj[0].y = 1;
+    game->ckonj[1].x = 7;
+    game->ckonj[1].y = 1;
+    game->bkonj[0].x = 2;
+    game->bkonj[0].y = 8;
+    game->bkonj[1].x = 7;
+    game->bkonj[1].y = 8;
+    game->bkonj[1].onboard = 1;
+    game->ckonj[1].onboard = 1;
+    game->bkonj[0].onboard = 1;
+    game->ckonj[0].onboard = 1;
+
+    game->claufar[0].x = 3;
+    game->claufar[0].y = 1;
+    game->claufar[1].x = 6;
+    game->claufar[1].y = 1;
+    game->blaufar[0].x = 3;
+    game->blaufar[0].y = 8;
+    game->blaufar[1].x = 6;
+    game->blaufar[1].y = 8;
+    game->blaufar[1].onboard = 1;
+    game->claufar[1].onboard = 1;
+    game->blaufar[0].onboard = 1;
+    game->claufar[0].onboard = 1;
+}
+
+int find(GameState *game,int xpos,int ypos,int nxpos,int nypos,int movecounter,int deleter){
+int i;
+int founded = 0;
+for(i=0;i<8;i++){
+        if(movecounter%2==0){
+if(game->bkmetje[i].x == xpos && game->bkmetje[i].y == ypos ){
+        if(deleter==0){
+    if((nxpos!=xpos || nypos!=ypos )&&(nypos+2==ypos && nxpos == xpos) && ypos == 7 ){
+    game->bkmetje[i].x = nxpos;
+    game->bkmetje[i].y = nypos;
+    founded = 1;
+    }else if((nxpos!=xpos || nypos!=ypos )&&(nypos+1==ypos && nxpos==xpos)){
+    game->bkmetje[i].x = nxpos;
+    game->bkmetje[i].y = nypos;
+    founded = 1;
+    }else{printf("wrong move\n");}
+        }else if(deleter>16 && deleter!=0){
+        if((nxpos!=xpos || nypos!=ypos )&&((nypos+1==ypos && nxpos-1==xpos) ||(nypos+1==ypos && nxpos+1==xpos) )){
+        game->bkmetje[i].x = nxpos;
+        game->bkmetje[i].y = nypos;
+        founded = 2;
+        }
+        }
+}
+        }
+        if(movecounter%2==1){
+if(game->ckmetje[i].x == xpos && game->ckmetje[i].y == ypos ){
+        if(deleter==0){
+    if((nxpos!=xpos || nypos!=ypos )&&(nypos-2==ypos && nxpos == xpos) && ypos == 2 ){
+    game->ckmetje[i].x = nxpos;
+    game->ckmetje[i].y = nypos;
+    founded = 1;
+    }else if((nxpos!=xpos || nypos!=ypos )&&(nypos-1==ypos && nxpos==xpos)){
+    game->ckmetje[i].x = nxpos;
+    game->ckmetje[i].y = nypos;
+    founded = 1;
+    }else{printf("wrong move\n");}
+        }else if(deleter<17 && deleter!=0){
+        if((nxpos!=xpos || nypos!=ypos )&&((nypos-1==ypos && nxpos-1==xpos) ||(nypos-1==ypos && nxpos+1==xpos) )){
+        game->ckmetje[i].x = nxpos;
+        game->ckmetje[i].y = nypos;
+        founded = 2;
+        }
+        }
+}
+        }
+}
+if(movecounter%2==1){
+if(game->ckralj.x == xpos && game->ckralj.y == ypos ){
+if((nxpos!=xpos || nypos!=ypos )&&(nypos-1==ypos || nypos+1 == ypos || nxpos-1==xpos || nxpos+1 == xpos)){
+    game->ckralj.x = nxpos;
+    game->ckralj.y = nypos;
+    game->ckralj.moved = 1;
+    founded = 1;
+}else if((nxpos!=xpos || nypos!=ypos )&& (xpos+2==nxpos && ypos==nypos)&& (game->ckralj.moved!=1) &&(game->ctrdnjava[1].moved!=1)){
+    game->ckralj.x = nxpos;
+    game->ckralj.y = nypos;
+    game->ckralj.moved = 1;
+    game->ctrdnjava[1].x = game->ckralj.x -1;
+    game->ctrdnjava[1].y = game->ckralj.y;
+    game->ctrdnjava[1].moved = 1;
+    founded = 1;
+}else if((nxpos!=xpos || nypos!=ypos )&& (xpos-2==nxpos && ypos==nypos)&& (game->ckralj.moved!=1)&&(game->ctrdnjava[0].moved!=1)){
+    if(poglejnpos(game,2,1)==0){
+    game->ckralj.x = nxpos;
+    game->ckralj.y = nypos;
+    game->ckralj.moved = 1;
+    game->ctrdnjava[0].x = game->ckralj.x +1;
+    game->ctrdnjava[0].y = game->ckralj.y;
+    game->ctrdnjava[0].moved = 1;
+    founded = 1;
+    }
+}else{printf("wrong move\n");}
+}
+}
+if(movecounter%2==0){
+if(game->bkralj.x == xpos && game->bkralj.y == ypos ){
+if((nxpos!=xpos || nypos!=ypos )&&(nypos-1==ypos || nypos+1 == ypos || nxpos-1==xpos || nxpos+1 == xpos)){
+    game->bkralj.x = nxpos;
+    game->bkralj.y = nypos;
+    game->bkralj.moved = 1;
+    founded = 1;
+}else if((nxpos!=xpos || nypos!=ypos )&& (xpos+2==nxpos && ypos==nypos)&& (game->bkralj.moved!=1)&&(game->ctrdnjava[1].moved!=1)){
+    game->bkralj.x = nxpos;
+    game->bkralj.y = nypos;
+    game->bkralj.moved = 1;
+    game->btrdnjava[1].x = game->bkralj.x -1;
+    game->btrdnjava[1].y = game->bkralj.y;
+    game->btrdnjava[1].moved = 1;
+    founded = 1;
+}else if((nxpos!=xpos || nypos!=ypos )&& (xpos-2==nxpos && ypos==nypos)&& (game->bkralj.moved!=1)&&(game->ctrdnjava[0].moved!=1)){
+        if(poglejnpos(game,2,8)==0){
+    game->bkralj.x = nxpos;
+    game->bkralj.y = nypos;
+    game->bkralj.moved = 1;
+    game->btrdnjava[0].x = game->bkralj.x +1;
+    game->btrdnjava[0].y = game->bkralj.y;
+    game->btrdnjava[0].moved = 1;
+    founded = 1;
+        }
+}else{printf("wrong move\n");}
+}
+}
+int j;
+for(j=1;j<9;j++){
+if(movecounter%2==1){
+for(i=0;i<9;i++){
+if(game->ckraljica[i].x == xpos && game->ckraljica[i].y == ypos ){
+if(((nxpos==xpos || nypos==ypos) && (xpos!=nxpos || ypos!=nypos)) ||
+   ((xpos+j==nxpos && ypos+j==nypos) || (xpos-j==nxpos && ypos-j==nypos) ||
+    (xpos-j==nxpos && ypos+j==nypos) || (xpos+j==nxpos && ypos-j==nypos))){
+    game->ckraljica[i].x = nxpos;
+    game->ckraljica[i].y = nypos;
+    founded = 1;
+}else{printf("wrong move\n");}
+}
+}
+}
+if(movecounter%2==0){
+for(i=0;i<9;i++){
+if(game->bkraljica[i].x == xpos && game->bkraljica[i].y == ypos ){
+if(((nxpos==xpos || nypos==ypos) && (xpos!=nxpos || ypos!=nypos)) ||
+   ((xpos+j==nxpos && ypos+j==nypos) || (xpos-j==nxpos && ypos-j==nypos) ||
+    (xpos-j==nxpos && ypos+j==nypos) || (xpos+j==nxpos && ypos-j==nypos))){
+    game->bkraljica[i].x = nxpos;
+    game->bkraljica[i].y = nypos;
+    founded = 1;
+}else{printf("wrong move\n");}
+}
+}
+}
+}
+for(i=0;i<2;i++){
+if((nxpos==xpos || nypos==ypos) && (nxpos!=xpos || nypos!=ypos )){
+if(movecounter%2==0){
+if(game->btrdnjava[i].x == xpos && game->btrdnjava[i].y == ypos ){
+    game->btrdnjava[i].x = nxpos;
+    game->btrdnjava[i].y = nypos;
+    game->btrdnjava[i].moved = 1;
+    founded = 1;
+}
+}
+if(movecounter%2==1){
+if(game->ctrdnjava[i].x == xpos && game->ctrdnjava[i].y == ypos ){
+    game->ctrdnjava[i].x = nxpos;
+    game->ctrdnjava[i].y = nypos;
+    game->ctrdnjava[i].moved = 1;
+    founded = 1;
+}
+}
+}
+if((xpos+2==nxpos && ypos+1==nypos)||(xpos+2==nxpos && ypos-1==nypos) ||
+   (xpos-2==nxpos && ypos+1==nypos)||(xpos-2==nxpos && ypos-1==nypos) ||
+   (xpos+1==nxpos && ypos+2==nypos)||(xpos+1==nxpos && ypos-2==nypos) ||
+   (xpos-1==nxpos && ypos+2==nypos)||(xpos-1==nxpos && ypos-2==nypos)){
+if(movecounter%2==0){
+if(game->bkonj[i].x == xpos && game->bkonj[i].y == ypos ){
+    game->bkonj[i].x = nxpos;
+    game->bkonj[i].y = nypos;
+    founded = 1;
+}
+}
+if(movecounter%2==1){
+if(game->ckonj[i].x == xpos && game->ckonj[i].y == ypos ){
+    game->ckonj[i].x = nxpos;
+    game->ckonj[i].y = nypos;
+    founded = 1;
+}
+}
+}
+if(nxpos!=xpos && nypos!=ypos ){
+    if((xpos+1==nxpos && ypos+1==nypos) || (xpos+1==nxpos && ypos-1==nypos) ||
+       (xpos-1==nxpos && ypos+1==nypos) || (xpos-1==nxpos && ypos-1==nypos) ||
+       (xpos+2==nxpos && ypos+2==nypos) || (xpos+2==nxpos && ypos-2==nypos) ||
+       (xpos-2==nxpos && ypos+2==nypos) || (xpos-2==nxpos && ypos-2==nypos) ||
+       (xpos+3==nxpos && ypos+3==nypos) || (xpos+3==nxpos && ypos-3==nypos) ||
+       (xpos-3==nxpos && ypos+3==nypos) || (xpos-3==nxpos && ypos-3==nypos) ||
+       (xpos+4==nxpos && ypos+4==nypos) || (xpos+4==nxpos && ypos-4==nypos) ||
+       (xpos-4==nxpos && ypos+4==nypos) || (xpos-4==nxpos && ypos-4==nypos) ||
+       (xpos+5==nxpos && ypos+5==nypos) || (xpos+5==nxpos && ypos-5==nypos) ||
+       (xpos-5==nxpos && ypos+5==nypos) || (xpos-5==nxpos && ypos-5==nypos) ||
+       (xpos+6==nxpos && ypos+6==nypos) || (xpos+6==nxpos && ypos-6==nypos) ||
+       (xpos-6==nxpos && ypos+6==nypos) || (xpos-6==nxpos && ypos-6==nypos) ||
+       (xpos+7==nxpos && ypos+7==nypos) || (xpos+7==nxpos && ypos-7==nypos) ||
+       (xpos-7==nxpos && ypos+7==nypos) || (xpos-7==nxpos && ypos-7==nypos)){
+if(movecounter%2==0){
+    if(game->blaufar[i].x == xpos && game->blaufar[i].y == ypos ){
+        game->blaufar[i].x = nxpos;
+        game->blaufar[i].y = nypos;
+        founded = 1;
+    }
+}
+if(movecounter%2==1){
+    if(game->claufar[i].x == xpos && game->claufar[i].y == ypos ){
+        game->claufar[i].x = nxpos;
+        game->claufar[i].y = nypos;
+        founded = 1;
+    }
+    }
+}
+}
+}
+return founded;
+}
+
+int poglejnpos(GameState *game,int nxpos,int nypos){
+int value = 0;
+int i;
+for(i=0;i<8;i++){
+    if(nxpos == game->bkmetje[i].x && nypos == game->bkmetje[i].y ){
+        value = i+1;
+    }
+    if(nxpos == game->ckmetje[i].x && nypos == game->ckmetje[i].y ){
+        value = i+17;
+    }
+}
+for(i=0;i<2;i++){
+    if(nxpos == game->btrdnjava[i].x && nypos == game->btrdnjava[i].y ){
+        value = i+9;
+    }
+    if(nxpos == game->ctrdnjava[i].x && nypos == game->ctrdnjava[i].y ){
+        value = i+25;
+    }
+    if(nxpos == game->blaufar[i].x && nypos == game->blaufar[i].y ){
+        value = i+11;
+    }
+    if(nxpos == game->claufar[i].x && nypos == game->claufar[i].y ){
+        value = i+27;
+    }
+    if(nxpos == game->bkonj[i].x && nypos == game->bkonj[i].y ){
+        value = i+13;
+    }
+    if(nxpos == game->ckonj[i].x && nypos == game->ckonj[i].y ){
+        value = i+29;
+    }
+
+}
+
+    if(nxpos == game->bkraljica[0].x && nypos == game->bkraljica[0].y ){
+        value = 15;
+    }
+    if(nxpos == game->ckraljica[0].x && nypos == game->ckraljica[0].y ){
+        value = 31;
+    }
+for(i=1;i<9;i++){
+        if(nxpos == game->bkraljica[i].x && nypos == game->bkraljica[i].y ){
+        value = 32+i;
+    }
+    if(nxpos == game->ckraljica[i].x && nypos == game->ckraljica[i].y ){
+        value = 40+i;
+    }
+}
+    if(nxpos == game->bkralj.x && nypos == game->bkralj.y ){
+        value = 16;
+    }
+    if(nxpos == game->ckralj.x && nypos == game->ckralj.y ){
+        value = 32;
+    }
+return value;
+}
+
+void deletepiece(GameState *game,int deleter){
+int i;
+if(deleter==1){
+    game->bkmetje[0].onboard = 0;
+    game->bkmetje[0].x = 0;
+    game->bkmetje[0].y = -8;
+}
+if(deleter==2){
+    game->bkmetje[1].onboard = 0;
+    game->bkmetje[1].x = 0;
+    game->bkmetje[1].y = -8;
+}
+if(deleter==3){
+    game->bkmetje[2].onboard = 0;
+    game->bkmetje[2].x = 0;
+    game->bkmetje[2].y = -8;
+}
+if(deleter==4){
+    game->bkmetje[3].onboard = 0;
+    game->bkmetje[3].x = 0;
+    game->bkmetje[3].y = -8;
+}
+if(deleter==5){
+    game->bkmetje[4].onboard = 0;
+    game->bkmetje[4].x = 0;
+    game->bkmetje[4].y = -8;
+}
+if(deleter==6){
+    game->bkmetje[5].onboard = 0;
+    game->bkmetje[5].x = 0;
+    game->bkmetje[5].y = -8;
+}
+if(deleter==7){
+    game->bkmetje[6].onboard = 0;
+    game->bkmetje[6].x = 0;
+    game->bkmetje[6].y = -8;
+}
+if(deleter==8){
+    game->bkmetje[7].onboard = 0;
+    game->bkmetje[7].x = 0;
+    game->bkmetje[7].y = -8;
+}
+if(deleter==9){
+    game->btrdnjava[0].onboard = 0;
+    game->btrdnjava[0].x = 0;
+    game->btrdnjava[0].y = -8;
+}
+if(deleter==10){
+    game->btrdnjava[1].onboard = 0;
+    game->btrdnjava[1].x = 0;
+    game->btrdnjava[1].y = -8;
+}
+if(deleter==11){
+    game->blaufar[0].onboard = 0;
+    game->blaufar[0].x = 0;
+    game->blaufar[0].y = -8;
+}
+if(deleter==12){
+    game->blaufar[1].onboard = 0;
+    game->blaufar[1].x = 0;
+    game->blaufar[1].y = -8;
+}
+if(deleter==13){
+    game->bkonj[0].onboard = 0;
+    game->bkonj[0].x = 0;
+    game->bkonj[0].y = -8;
+}
+if(deleter==14){
+    game->bkonj[1].onboard = 0;
+    game->bkonj[1].x = 0;
+    game->bkonj[1].y = -8;
+}
+if(deleter==15){
+    game->bkraljica[0].onboard = 0;
+    game->bkraljica[0].x = 0;
+    game->bkraljica[0].y = -8;
+}
+if(deleter==16){
+    game->bkralj.onboard = 0;
+    game->bkralj.x = 0;
+    game->bkralj.y = -8;
+}
+if(deleter==17){
+    game->ckmetje[0].onboard = 0;
+    game->ckmetje[0].x = 0;
+    game->ckmetje[0].y = -8;
+}
+if(deleter==18){
+    game->ckmetje[1].onboard = 0;
+    game->ckmetje[1].x = 0;
+    game->ckmetje[1].y = -8;
+}
+if(deleter==19){
+    game->ckmetje[2].onboard = 0;
+    game->ckmetje[2].x = 0;
+    game->ckmetje[2].y = -8;
+}
+if(deleter==20){
+    game->ckmetje[3].onboard = 0;
+    game->ckmetje[3].x = 0;
+    game->ckmetje[3].y = -8;
+}
+if(deleter==21){
+    game->ckmetje[4].onboard = 0;
+    game->ckmetje[4].x = 0;
+    game->ckmetje[4].y = -8;
+}
+if(deleter==22){
+    game->ckmetje[5].onboard = 0;
+    game->ckmetje[5].x = 0;
+    game->ckmetje[5].y = -8;
+}
+if(deleter==23){
+    game->ckmetje[6].onboard = 0;
+    game->ckmetje[6].x = 0;
+    game->ckmetje[6].y = -8;
+}
+if(deleter==24){
+    game->ckmetje[7].onboard = 0;
+    game->ckmetje[7].x = 0;
+    game->ckmetje[7].y = -8;
+}
+if(deleter==25){
+    game->ctrdnjava[0].onboard = 0;
+    game->ctrdnjava[0].x = 0;
+    game->ctrdnjava[0].y = -8;
+}
+if(deleter==26){
+    game->ctrdnjava[1].onboard = 0;
+    game->ctrdnjava[1].x = 0;
+    game->ctrdnjava[1].y = -8;
+}
+if(deleter==27){
+    game->claufar[0].onboard = 0;
+    game->claufar[0].x = 0;
+    game->claufar[0].y = -8;
+}
+if(deleter==28){
+    game->claufar[1].onboard = 0;
+    game->claufar[1].x = 0;
+    game->claufar[1].y = -8;
+}
+if(deleter==29){
+    game->ckonj[0].onboard = 0;
+    game->ckonj[0].x = 0;
+    game->ckonj[0].y = -8;
+}
+if(deleter==30){
+    game->ckonj[1].onboard = 0;
+    game->ckonj[1].x = 0;
+    game->ckonj[1].y = -8;
+}
+if(deleter==31){
+    game->ckraljica[0].onboard = 0;
+    game->ckraljica[0].x = 0;
+    game->ckraljica[0].y = -8;
+}
+if(deleter==32){
+    game->ckralj.onboard = 0;
+    game->ckralj.x = 0;
+    game->ckralj.y = -8;
+}
+for(i=1;i<9;i++){
+   if(deleter==40+i){
+    game->ckraljica[i].onboard = 0;
+    game->ckraljica[i].x = 0;
+    game->ckraljica[i].y = -8;
+}
+   if(deleter==32+i){
+    game->bkraljica[i].onboard = 0;
+    game->bkraljica[i].x = 0;
+    game->bkraljica[i].y = -8;
+}
+}
+}
+
+int moveisvalid(GameState *game,int xpos,int ypos,int nxpos,int nypos){
+int i,j;
+int valid = 1;
+int fullsq = 0;
+for(i=0;i<8;i++){
+    if(xpos+i==nxpos && ypos==nypos){
+       for(j=1;j<i;j++){
+        fullsq = poglejnpos(game,xpos+j,ypos);
+        if(fullsq!=0){
+            valid = 0;
+        }
+        }
+    }
+    if(xpos-i==nxpos && ypos==nypos){
+        for(j=-1;j>i*-1;j--){
+        fullsq = poglejnpos(game,xpos+j,ypos);
+        if(fullsq!=0){
+            valid = 0;
+        }
+        }
+    }
+    if(xpos==nxpos && ypos+i==nypos){
+       for(j=1;j<i;j++){
+        fullsq = poglejnpos(game,xpos,ypos+j);
+        if(fullsq!=0){
+            valid = 0;
+        }
+        }
+    }
+    if(xpos==nxpos && ypos-i==nypos){
+       for(j=-1;j>i*-1;j--){
+        fullsq = poglejnpos(game,xpos,ypos+j);
+        if(fullsq!=0){
+            valid = 0;
+        }
+        }
+    }
+    if(xpos+i==nxpos && ypos+i==nypos){
+       for(j=1;j<i;j++){
+        fullsq = poglejnpos(game,xpos+j,ypos+j);
+        if(fullsq!=0){
+            valid = 0;
+        }
+        }
+    }
+    if(xpos-i==nxpos && ypos-i==nypos){
+       for(j=1;j<i;j++){
+        fullsq = poglejnpos(game,xpos-j,ypos-j);
+        if(fullsq!=0){
+            valid = 0;
+        }
+        }
+    }
+    if(xpos+i==nxpos && ypos-i==nypos){
+       for(j=1;j<i;j++){
+        fullsq = poglejnpos(game,xpos+j,ypos-j);
+        if(fullsq!=0){
+            valid = 0;
+        }
+        }
+    }
+    if(xpos-i==nxpos && ypos+i==nypos){
+       for(j=1;j<i;j++){
+        fullsq = poglejnpos(game,xpos-j,ypos+j);
+        if(fullsq!=0){
+            valid = 0;
+        }
+        }
+    }
+
+}
+
+
+return valid;
+}
+
+void promotion(GameState *game){
+int i;
+    for(i=0;i<8;i++){
+    if(game->bkmetje[i].y==1){
+        game->bkraljica[i+1].y = game->bkmetje[i].y;
+        game->bkraljica[i+1].x = game->bkmetje[i].x;
+        game->bkraljica[i+1].onboard = 1;
+        game->bkmetje[i].y = -8;
+        game->bkmetje[i].x = 0;
+        game->bkmetje[i].onboard = 0;
+    }
+    if(game->ckmetje[i].y==8){
+        game->ckraljica[i+1].y = game->ckmetje[i].y;
+        game->ckraljica[i+1].x = game->ckmetje[i].x;
+        game->ckraljica[i+1].onboard = 1;
+        game->ckmetje[i].y = -8;
+        game->ckmetje[i].x = 0;
+        game->ckmetje[i].onboard = 0;
+    }
+    }
+}
+
+int checkob(GameState *game,int which){
+int i,j = 0;
+int check = 0;
+//check for white king
+if(which==0 || which==1){
+for(j=0;j<8;j++){
+    for(i=0;i<8;i++){
+        if((game->bkralj.x+i == game->ckraljica[j].x && game->bkralj.y == game->ckraljica[j].y) ||
+           (game->bkralj.x-i == game->ckraljica[j].x && game->bkralj.y == game->ckraljica [j].y) ||
+           (game->bkralj.x == game->ckraljica[j].x && game->bkralj.y+i == game->ckraljica[j].y) ||
+           (game->bkralj.x == game->ckraljica[j].x && game->bkralj.y-i == game->ckraljica[j].y) ||
+           (game->bkralj.x+i == game->ckraljica[j].x && game->bkralj.y+i == game->ckraljica[j].y) ||
+           (game->bkralj.x-i == game->ckraljica[j].x && game->bkralj.y-i == game->ckraljica[j].y) ||
+           (game->bkralj.x-i == game->ckraljica[j].x && game->bkralj.y+i == game->ckraljica[j].y) ||
+           (game->bkralj.x+i == game->ckraljica[j].x && game->bkralj.y-i == game->ckraljica[j].y)){
+           if(moveisvalid(game,game->ckraljica[j].x,game->ckraljica[j].y,game->bkralj.x,game->bkralj.y)!=0){
+            check = 1;
+           }
+           }
+    }
+}
+for(j=0;j<2;j++){
+    for(i=0;i<8;i++){
+        if((game->bkralj.x+i == game->ctrdnjava[j].x && game->bkralj.y == game->ctrdnjava[j].y) ||
+           (game->bkralj.x-i == game->ctrdnjava[j].x && game->bkralj.y == game->ctrdnjava [j].y) ||
+           (game->bkralj.x == game->ctrdnjava[j].x && game->bkralj.y+i == game->ctrdnjava[j].y) ||
+           (game->bkralj.x == game->ctrdnjava[j].x && game->bkralj.y-i == game->ctrdnjava[j].y)){
+           if(moveisvalid(game,game->ctrdnjava[j].x,game->ctrdnjava[j].y,game->bkralj.x,game->bkralj.y)!=0){
+            check = 1;
+           }
+           }
+        if((game->bkralj.x+i == game->claufar[j].x && game->bkralj.y+i == game->claufar[j].y) ||
+           (game->bkralj.x-i == game->claufar[j].x && game->bkralj.y-i == game->claufar[j].y) ||
+           (game->bkralj.x-i == game->claufar[j].x && game->bkralj.y+i == game->claufar[j].y) ||
+           (game->bkralj.x+i == game->claufar[j].x && game->bkralj.y-i == game->claufar[j].y)){
+           if(moveisvalid(game,game->claufar[j].x,game->claufar[j].y,game->bkralj.x,game->bkralj.y)!=0){
+            check = 1;
+           }
+           }
+        if(game->bkralj.x-1 == game->ckmetje[i].x && game->bkralj.y-1 == game->ckmetje[i].y ||
+              game->bkralj.x+1 == game->ckmetje[i].x && game->bkralj.y-1 == game->ckmetje[i].y){
+           check = 1;
+        }
+    }
+         if((game->bkralj.x+1 == game->ckonj[j].x && game->bkralj.y+2 == game->ckonj[j].y) ||
+           (game->bkralj.x-1 == game->ckonj[j].x && game->bkralj.y-2 == game->ckonj[j].y) ||
+           (game->bkralj.x-2 == game->ckonj[j].x && game->bkralj.y+1 == game->ckonj[j].y) ||
+           (game->bkralj.x+2 == game->ckonj[j].x && game->bkralj.y-1 == game->ckonj[j].y) ||
+            (game->bkralj.x+1 == game->ckonj[j].x && game->bkralj.y-2 == game->ckonj[j].y) ||
+           (game->bkralj.x-1 == game->ckonj[j].x && game->bkralj.y+2 == game->ckonj[j].y) ||
+           (game->bkralj.x-2 == game->ckonj[j].x && game->bkralj.y-1 == game->ckonj[j].y) ||
+           (game->bkralj.x+2 == game->ckonj[j].x && game->bkralj.y+1 == game->ckonj[j].y)){
+           check = 1;
+           }
+}
+}
+if(which==0 || which==2){
+//check for black king
+for(j=0;j<8;j++){
+    for(i=0;i<8;i++){
+        if((game->ckralj.x+i == game->bkraljica[j].x && game->ckralj.y == game->bkraljica[j].y) ||
+           (game->ckralj.x-i == game->bkraljica[j].x && game->ckralj.y == game->bkraljica [j].y) ||
+           (game->ckralj.x == game->bkraljica[j].x && game->ckralj.y+i == game->bkraljica[j].y) ||
+           (game->ckralj.x == game->bkraljica[j].x && game->ckralj.y-i == game->bkraljica[j].y) ||
+           (game->ckralj.x+i == game->bkraljica[j].x && game->ckralj.y+i == game->bkraljica[j].y) ||
+           (game->ckralj.x-i == game->bkraljica[j].x && game->ckralj.y-i == game->bkraljica[j].y) ||
+           (game->ckralj.x-i == game->bkraljica[j].x && game->ckralj.y+i == game->bkraljica[j].y) ||
+           (game->ckralj.x+i == game->bkraljica[j].x && game->ckralj.y-i == game->bkraljica[j].y)){
+           if(moveisvalid(game,game->bkraljica[j].x,game->bkraljica[j].y,game->ckralj.x,game->ckralj.y)!=0){
+            check = 1;
+           }
+           }
+    }
+}
+for(j=0;j<2;j++){
+    for(i=0;i<8;i++){
+        if((game->ckralj.x+i == game->btrdnjava[j].x && game->ckralj.y == game->btrdnjava[j].y) ||
+           (game->ckralj.x-i == game->btrdnjava[j].x && game->ckralj.y == game->btrdnjava [j].y) ||
+           (game->ckralj.x == game->btrdnjava[j].x && game->ckralj.y+i == game->btrdnjava[j].y) ||
+           (game->ckralj.x == game->btrdnjava[j].x && game->ckralj.y-i == game->btrdnjava[j].y)){
+           if(moveisvalid(game,game->btrdnjava[j].x,game->btrdnjava[j].y,game->ckralj.x,game->ckralj.y)!=0){
+            check = 1;
+           }
+           }
+        if((game->ckralj.x+i == game->blaufar[j].x && game->ckralj.y+i == game->blaufar[j].y) ||
+           (game->ckralj.x-i == game->blaufar[j].x && game->ckralj.y-i == game->blaufar[j].y) ||
+           (game->ckralj.x-i == game->blaufar[j].x && game->ckralj.y+i == game->blaufar[j].y) ||
+           (game->ckralj.x+i == game->blaufar[j].x && game->ckralj.y-i == game->blaufar[j].y)){
+           if(moveisvalid(game,game->blaufar[j].x,game->blaufar[j].y,game->ckralj.x,game->ckralj.y)!=0){
+            check = 1;
+           }
+           }
+        if(game->ckralj.x-1 == game->bkmetje[i].x && game->ckralj.y+1 == game->bkmetje[i].y ||
+              game->ckralj.x+1 == game->bkmetje[i].x && game->ckralj.y+1 == game->bkmetje[i].y){
+           check = 1;
+        }
+    }
+         if((game->ckralj.x+1 == game->bkonj[j].x && game->ckralj.y+2 == game->bkonj[j].y) ||
+           (game->ckralj.x-1 == game->bkonj[j].x && game->ckralj.y-2 == game->bkonj[j].y) ||
+           (game->ckralj.x-2 == game->bkonj[j].x && game->ckralj.y+1 == game->bkonj[j].y) ||
+           (game->ckralj.x+2 == game->bkonj[j].x && game->ckralj.y-1 == game->bkonj[j].y) ||
+            (game->ckralj.x+1 == game->bkonj[j].x && game->ckralj.y-2 == game->bkonj[j].y) ||
+           (game->ckralj.x-1 == game->bkonj[j].x && game->ckralj.y+2 == game->bkonj[j].y) ||
+           (game->ckralj.x-2 == game->bkonj[j].x && game->ckralj.y-1 == game->bkonj[j].y) ||
+           (game->ckralj.x+2 == game->bkonj[j].x && game->ckralj.y+1 == game->bkonj[j].y)){
+           check = 1;
+           }
+
+
+}
+}
+return check;
+}
+
+void movepiece(GameState *game,int xpos,int ypos,int nxpos,int nypos,int which){
+int i;
+
+for(i=0;i<8;i++){
+if(which==1){
+if(game->bkmetje[i].x == xpos && game->bkmetje[i].y == ypos ){
+    game->bkmetje[i].x = nxpos;
+    game->bkmetje[i].y = nypos;
+}
+}
+if(which==2){
+if(game->ckmetje[i].x == xpos && game->ckmetje[i].y == ypos ){
+    game->ckmetje[i].x = nxpos;
+    game->ckmetje[i].y = nypos;
+}
+}
+}
+if(which==2){
+if(game->ckralj.x == xpos && game->ckralj.y == ypos ){
+    game->ckralj.x = nxpos;
+    game->ckralj.y = nypos;
+}
+}
+if(which==1){
+if(game->bkralj.x == xpos && game->bkralj.y == ypos ){
+    game->bkralj.x = nxpos;
+    game->bkralj.y = nypos;
+}
+}
+int j;
+for(i=0;i<9;i++){
+if(which==2){
+if(game->ckraljica[i].x == xpos && game->ckraljica[i].y == ypos ){
+    game->ckraljica[i].x = nxpos;
+    game->ckraljica[i].y = nypos;
+}
+}
+if(which==1){
+if(game->bkraljica[i].x == xpos && game->bkraljica[i].y == ypos ){
+    game->bkraljica[i].x = nxpos;
+    game->bkraljica[i].y = nypos;
+
+}
+}
+}
+for(i=0;i<2;i++){
+if(which==1){
+if(game->btrdnjava[i].x == xpos && game->btrdnjava[i].y == ypos ){
+    game->btrdnjava[i].x = nxpos;
+    game->btrdnjava[i].y = nypos;
+}
+}
+if(which==2){
+if(game->ctrdnjava[i].x == xpos && game->ctrdnjava[i].y == ypos ){
+    game->ctrdnjava[i].x = nxpos;
+    game->ctrdnjava[i].y = nypos;
+}
+}
+if(which==1){
+if(game->bkonj[i].x == xpos && game->bkonj[i].y == ypos ){
+    game->bkonj[i].x = nxpos;
+    game->bkonj[i].y = nypos;
+}
+}
+if(which==2){
+if(game->ckonj[i].x == xpos && game->ckonj[i].y == ypos ){
+    game->ckonj[i].x = nxpos;
+    game->ckonj[i].y = nypos;
+}
+}
+if(which==1){
+if(game->blaufar[i].x == xpos && game->blaufar[i].y == ypos ){
+    game->blaufar[i].x = nxpos;
+    game->blaufar[i].y = nypos;
+}
+}
+if(which==2){
+if(game->claufar[i].x == xpos && game->claufar[i].y == ypos ){
+    game->claufar[i].x = nxpos;
+    game->claufar[i].y = nypos;
+}
+}
+}
+}
+
+void undeletepiece(GameState *game,int deleter,int nxpos,int nypos){
+int i;
+if(deleter==1){
+    game->bkmetje[0].onboard = 1;
+    game->bkmetje[0].x = nxpos;
+    game->bkmetje[0].y = nypos;
+}
+if(deleter==2){
+    game->bkmetje[1].onboard = 1;
+    game->bkmetje[1].x = nxpos;
+    game->bkmetje[1].y = nypos;
+}
+if(deleter==3){
+    game->bkmetje[2].onboard = 1;
+    game->bkmetje[2].x = nxpos;
+    game->bkmetje[2].y = nypos;
+}
+if(deleter==4){
+    game->bkmetje[3].onboard = 1;
+    game->bkmetje[3].x = nxpos;
+    game->bkmetje[3].y = nypos;
+}
+if(deleter==5){
+    game->bkmetje[4].onboard = 1;
+    game->bkmetje[4].x = nxpos;
+    game->bkmetje[4].y = nypos;
+}
+if(deleter==6){
+    game->bkmetje[5].onboard = 1;
+    game->bkmetje[5].x = nxpos;
+    game->bkmetje[5].y = nypos;
+}
+if(deleter==7){
+    game->bkmetje[6].onboard = 1;
+    game->bkmetje[6].x = nxpos;
+    game->bkmetje[6].y = nypos;
+}
+if(deleter==8){
+    game->bkmetje[7].onboard = 1;
+    game->bkmetje[7].x = nxpos;
+    game->bkmetje[7].y = nypos;
+}
+if(deleter==9){
+    game->btrdnjava[0].onboard = 1;
+    game->btrdnjava[0].x = nxpos;
+    game->btrdnjava[0].y = nypos;
+}
+if(deleter==10){
+    game->btrdnjava[1].onboard = 1;
+    game->btrdnjava[1].x = nxpos;
+    game->btrdnjava[1].y = nypos;
+}
+if(deleter==11){
+    game->blaufar[0].onboard = 1;
+    game->blaufar[0].x = nxpos;
+    game->blaufar[0].y = nypos;
+}
+if(deleter==12){
+    game->blaufar[1].onboard = 1;
+    game->blaufar[1].x = nxpos;
+    game->blaufar[1].y = nypos;
+}
+if(deleter==13){
+    game->bkonj[0].onboard = 1;
+    game->bkonj[0].x = nxpos;
+    game->bkonj[0].y = nypos;
+}
+if(deleter==14){
+    game->bkonj[1].onboard = 1;
+    game->bkonj[1].x = nxpos;
+    game->bkonj[1].y = nypos;
+}
+if(deleter==15){
+    game->bkraljica[0].onboard = 1;
+    game->bkraljica[0].x = nxpos;
+    game->bkraljica[0].y = nypos;
+}
+if(deleter==16){
+    game->bkralj.onboard = 1;
+    game->bkralj.x = nxpos;
+    game->bkralj.y = nypos;
+}
+if(deleter==17){
+    game->ckmetje[0].onboard = 1;
+    game->ckmetje[0].x = nxpos;
+    game->ckmetje[0].y = nypos;
+}
+if(deleter==18){
+    game->ckmetje[1].onboard = 1;
+    game->ckmetje[1].x = nxpos;
+    game->ckmetje[1].y = nypos;
+}
+if(deleter==19){
+    game->ckmetje[2].onboard = 1;
+    game->ckmetje[2].x = nxpos;
+    game->ckmetje[2].y = nypos;
+}
+if(deleter==20){
+    game->ckmetje[3].onboard = 1;
+    game->ckmetje[3].x = nxpos;
+    game->ckmetje[3].y = nypos;
+}
+if(deleter==21){
+    game->ckmetje[4].onboard = 1;
+    game->ckmetje[4].x = nxpos;
+    game->ckmetje[4].y = nypos;
+}
+if(deleter==22){
+    game->ckmetje[5].onboard = 1;
+    game->ckmetje[5].x = nxpos;
+    game->ckmetje[5].y = nypos;
+}
+if(deleter==23){
+    game->ckmetje[6].onboard = 1;
+    game->ckmetje[6].x = nxpos;
+    game->ckmetje[6].y = nypos;
+}
+if(deleter==24){
+    game->ckmetje[7].onboard = 1;
+    game->ckmetje[7].x = nxpos;
+    game->ckmetje[7].y = nypos;
+}
+if(deleter==25){
+    game->ctrdnjava[0].onboard = 1;
+    game->ctrdnjava[0].x = nxpos;
+    game->ctrdnjava[0].y = nypos;
+}
+if(deleter==26){
+    game->ctrdnjava[1].onboard = 1;
+    game->ctrdnjava[1].x = nxpos;
+    game->ctrdnjava[1].y = nypos;
+}
+if(deleter==27){
+    game->claufar[0].onboard = 1;
+    game->claufar[0].x = nxpos;
+    game->claufar[0].y = nypos;
+}
+if(deleter==28){
+    game->claufar[1].onboard = 1;
+    game->claufar[1].x = nxpos;
+    game->claufar[1].y = nypos;
+}
+if(deleter==29){
+    game->ckonj[0].onboard = 1;
+    game->ckonj[0].x = nxpos;
+    game->ckonj[0].y = nypos;
+}
+if(deleter==30){
+    game->ckonj[1].onboard = 1;
+    game->ckonj[1].x = nxpos;
+    game->ckonj[1].y = nypos;
+}
+if(deleter==31){
+    game->ckraljica[0].onboard = 1;
+    game->ckraljica[0].x = nxpos;
+    game->ckraljica[0].y = nypos;
+}
+if(deleter==32){
+    game->ckralj.onboard = 1;
+    game->ckralj.x = nxpos;
+    game->ckralj.y = nypos;
+}
+for(i=1;i<9;i++){
+   if(deleter==40+i){
+    game->ckraljica[i].onboard = 1;
+    game->ckraljica[i].x = nxpos;
+    game->ckraljica[i].y = nypos;
+}
+   if(deleter==32+i){
+    game->bkraljica[i].onboard = 1;
+    game->bkraljica[i].x = nxpos;
+    game->bkraljica[i].y = nypos;
+}
+}
+}
+
+int main ( int argc, char *argv[] ){
+srand(time(NULL));
+int done = 0;
+int founded = 0;
+int movecounter = 0;
+int deleter = 0;
+int movingpiece = 0;
+int valid = 1;
+int xpos = 0;
+int ypos = 0;
+int nxpos = 0;
+int nypos = 0;
+int check = 0;
+GameState game;
+initGame(&game);
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
+SDL_Init(SDL_INIT_VIDEO);
+window = SDL_CreateWindow("chess",320,24,700,700,0);
+renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+printf("white move first\n");
+while(!done){
+done = processEvents(window,&game);
+doRender(renderer,&game);
+printf("from:");
+scanf("%d %d",&xpos,&ypos);
+printf("to:");
+scanf("%d %d",&nxpos,&nypos);
+deleter = poglejnpos(&game,nxpos,nypos);
+movingpiece = poglejnpos(&game,xpos,ypos);
+if(movingpiece==9 || movingpiece==10 || movingpiece==11 || movingpiece==12 ||
+   movingpiece==15 || movingpiece==25 || movingpiece==26 || movingpiece==27 ||
+   movingpiece==28 || movingpiece==31 || movingpiece==16 || movingpiece==32 || movingpiece > 32){
+   valid = moveisvalid(&game,xpos,ypos,nxpos,nypos);
+}
+
+if(xpos<9 && xpos>0 && ypos<9 && ypos>0 && nxpos<9 && nxpos>0 && nypos<9 && nypos>0 ){
+if(((movecounter%2==0 && ((deleter>16 && deleter<33) || (deleter>40))) || (movecounter%2==1 && ((deleter<17 && deleter>0)||(deleter>32 &&deleter<41)))) || deleter==0 ){
+if(valid==1){
+
+founded = find(&game,xpos,ypos,nxpos,nypos,movecounter,deleter);
+
+}
+}else{
+deleter = -1;
+}
+}else{
+deleter = -1;
+printf("wrong number\n");
+}
+if(deleter!=0){
+    deletepiece(&game,deleter);
+}
+if(founded!=0 && movecounter%2==0){
+check = checkob(&game,1);
+if(check==1){
+    movepiece(&game,nxpos,nypos,xpos,ypos,1);
+    if(deleter!=0){
+        undeletepiece(&game,deleter,nxpos,nypos);
+    }
+    founded = 0;
+    check = 0;
+}
+}
+if(founded!=0 && movecounter%2==1){
+check = checkob(&game,2);
+if(check==1){
+    movepiece(&game,nxpos,nypos,xpos,ypos,2);
+    if(deleter!=0){
+        undeletepiece(&game,deleter,nxpos,nypos);
+    }
+    founded = 0;
+    check = 0;
+}
+}
+promotion(&game);
+if(founded == 0){
+    printf("you didn't move anything\n");
+    deleter = 0;
+}
+if(founded!=0 && deleter!=-1 && valid==1){
+    movecounter++;
+    check = checkob(&game,0);
+}
+if(valid == 0){
+    valid = 1;
+}
+if(movecounter%2==0){
+    printf("\n\nwhite's move:\n");
+}else{
+    printf("\n\nblack's move:\n");
+}
+if(check==1){
+    printf("\n\ncheck!!!\n\n");
+    check = 0;
+}
+}
+
+SDL_DestroyWindow(window);
+SDL_DestroyRenderer(renderer);
+SDL_Quit();
+
+  return 0;
+}

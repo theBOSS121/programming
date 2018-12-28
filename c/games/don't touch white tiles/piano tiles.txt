@@ -1,0 +1,300 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <SDL2/SDL.h>
+
+int score = 0;
+
+typedef struct{
+int x;
+int y;
+int tapted;
+}Tile;
+
+typedef struct{
+Tile tile[6];
+int scrolly;
+}GameState;
+
+//zaznava gumbe in caka ce bo pritisnen krizec za zepretiokno ali pa esc key
+int processEvents(SDL_Window *window, GameState *game,int lowest){
+SDL_Event event;
+int done = 0;
+while(SDL_PollEvent(&event)){
+        switch(event.type){
+        case SDL_WINDOWEVENT_CLOSE:
+            {
+                if(window){
+                    SDL_DestroyWindow(window);
+                    window = NULL;
+                }
+            }
+            break;
+        case SDL_KEYDOWN:
+            {
+                switch(event.key.keysym.sym)
+                    case SDLK_ESCAPE:
+                    {
+                        done = 3;
+                        break;
+                    }
+
+            }
+            break;
+        case SDL_QUIT:
+            {
+                done = 3;
+                break;
+            }
+        }
+
+}
+int i;
+    const uint8_t *state = SDL_GetKeyboardState(NULL);
+    if(state[SDL_SCANCODE_1]){
+        if(game->tile[lowest].x==0){
+            game->tile[lowest].tapted = 1;
+            score++;
+            done = 2;
+        }else{
+            done = 1;
+        }
+    }
+    if(state[SDL_SCANCODE_2]){
+        if(game->tile[lowest].x==150){
+            game->tile[lowest].tapted = 1;
+            score++;
+            done = 2;
+
+        }else{
+            done = 1;
+        }
+    }
+    if(state[SDL_SCANCODE_3]){
+        if(game->tile[lowest].x==300){
+            game->tile[lowest].tapted = 1;
+            score++;
+            done = 2;
+        }else{
+            done = 1;
+        }
+    }
+    if(state[SDL_SCANCODE_4]){
+        if(game->tile[lowest].x==450){
+            game->tile[lowest].tapted = 1;
+            score++;
+            done = 2;
+        }else{
+            done = 1;
+        }
+    }
+
+    return done;
+}
+//rise igro
+void doRender(SDL_Renderer *renderer, GameState *game){
+    int i;
+    //draw beckround
+    SDL_SetRenderDrawColor(renderer,255,255,250,255);
+    SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(renderer,0,0,0,255);
+    SDL_Rect rect = {150,0,2,720};
+    SDL_RenderFillRect(renderer,&rect);
+    SDL_Rect rect1 = {300,0,2,720};
+    SDL_RenderFillRect(renderer,&rect1);
+    SDL_Rect rect2 = {450,0,2,720};
+    SDL_RenderFillRect(renderer,&rect2);
+    for(i=0;i<5;i++){
+    SDL_SetRenderDrawColor(renderer,0,0,0,255);
+    SDL_Rect rect = {0,game->tile[i].y-1,600,2};
+    SDL_RenderFillRect(renderer,&rect);
+    if(game->tile[i].tapted == 0){
+    SDL_SetRenderDrawColor(renderer,0,0,0,255);
+    SDL_Rect rect = {game->tile[i].x,game->tile[i].y,150,182};
+    SDL_RenderFillRect(renderer,&rect);
+    }else{
+    SDL_SetRenderDrawColor(renderer,255,255,255,255);
+    SDL_Rect rect = {game->tile[i].x+2,game->tile[i].y+1,148,178};
+    SDL_RenderFillRect(renderer,&rect);
+    }
+    }
+    //narise na window
+    SDL_RenderPresent(renderer);
+}
+
+void initGame(GameState *game){
+    int i;
+    for(i=0;i<5;i++){
+    game->tile[i].x = (rand()%4)*150;
+    game->tile[i].y = (i*180)-180;
+    game->tile[i].tapted = 0;
+    }
+    game->scrolly = 1;
+
+    game->tile[5].x = (rand()%4)*150;
+    game->tile[5].y = -360;
+    game->tile[5].tapted = 0;
+}
+
+int scrolling(GameState *game){
+    int i;
+    int done = 0;
+    for(i=0;i<5;i++){
+    game->tile[i].y += game->scrolly;
+    if(game->tile[i].y==720){
+    if(game->tile[i].tapted!=1){
+        done = 1;
+    }
+        game->tile[i].y = -180;
+        game->tile[i].x = (rand()%4)*150;
+        game->tile[i].tapted = 0;
+
+    }
+    if(game->tile[i].y==721){
+    if(game->tile[i].tapted!=1){
+        done = 1;
+    }
+        game->tile[i].y = -179;
+        game->tile[i].x = (rand()%4)*150;
+        game->tile[i].tapted = 0;
+
+    }
+    if(game->tile[i].y==722){
+    if(game->tile[i].tapted!=1){
+        done = 1;
+    }
+        game->tile[i].y = -178;
+        game->tile[i].x = (rand()%4)*150;
+        game->tile[i].tapted = 0;
+
+    }
+    if(game->tile[i].y==723){
+    if(game->tile[i].tapted!=1){
+        done = 1;
+    }
+        game->tile[i].y = -177;
+        game->tile[i].x = (rand()%4)*150;
+        game->tile[i].tapted = 0;
+
+    }
+    if(game->tile[i].y==724){
+    if(game->tile[i].tapted!=1){
+        done = 1;
+    }
+        game->tile[i].y = -176;
+        game->tile[i].x = (rand()%4)*150;
+        game->tile[i].tapted = 0;
+
+    }
+    if(game->tile[i].y==725){
+    if(game->tile[i].tapted!=1){
+        done = 1;
+    }
+        game->tile[i].y = -175;
+        game->tile[i].x = (rand()%4)*150;
+        game->tile[i].tapted = 0;
+
+    }
+    if(game->tile[i].y==726){
+    if(game->tile[i].tapted!=1){
+        done = 1;
+    }
+        game->tile[i].y = -174;
+        game->tile[i].x = (rand()%4)*150;
+        game->tile[i].tapted = 0;
+
+    }
+    if(game->tile[i].y==727){
+    if(game->tile[i].tapted!=1){
+        done = 1;
+    }
+        game->tile[i].y = -173;
+        game->tile[i].x = (rand()%4)*150;
+        game->tile[i].tapted = 0;
+
+    }
+    if(game->tile[i].y==728){
+    if(game->tile[i].tapted!=1){
+        done = 1;
+    }
+        game->tile[i].y = -172;
+        game->tile[i].x = (rand()%4)*150;
+        game->tile[i].tapted = 0;
+
+    }
+    }
+return done;
+}
+
+int thelowest(GameState *game){
+int lowest = 5;
+int i;
+for(i=0;i<5;i++){
+    if(game->tile[i].y> game->tile[lowest].y){
+        if(game->tile[i].tapted == 0){
+        lowest = i;
+        }
+    }
+}
+return lowest;
+}
+
+int main ( int argc, char *argv[] ){
+srand(time(NULL));
+int done = 0;
+int dontgo = 0;
+int time = 1;
+int loopcounter = 0;
+GameState game;
+initGame(&game);
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
+SDL_Init(SDL_INIT_VIDEO);
+window = SDL_CreateWindow("don't touch white tiles",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,600,720,0);
+renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+int lowest;
+
+while(!done){
+if(dontgo!=1){
+done = processEvents(window,&game,lowest);
+time = 1;
+}
+if(done==2){
+    done = 0;
+    dontgo = 1;
+}
+if(dontgo==1){
+    time++;
+    if(time>15){
+        dontgo=0;
+    }
+}
+doRender(renderer,&game);
+int gameover = scrolling(&game);
+lowest = thelowest(&game);
+if(gameover==1){
+    done = 1;
+}
+if(loopcounter%500==0){
+    if(game.scrolly < 8)
+    game.scrolly++;
+}
+loopcounter++;
+}
+if(done !=3){
+SDL_Delay(1000);
+}
+SDL_DestroyWindow(window);
+SDL_DestroyRenderer(renderer);
+SDL_Quit();
+printf("game over!!!\n");
+printf("your score is:%d\n",score);
+printf("if you want to play again press 'y' key\n");
+char key = getch();
+system("cls");
+if(key =='y'){
+score = 0;
+main(0,0);
+}
+  return 0;
+}

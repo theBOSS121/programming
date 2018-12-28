@@ -1,0 +1,277 @@
+#include <stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <stdbool.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
+
+typedef struct{
+int x,y;
+short life;
+char *name;
+}Man;
+
+typedef struct{
+Man man;
+Man man2;
+Man enemy[20];
+int s;
+}GameState;
+
+int processEvents(SDL_Window *window, GameState *game){
+
+SDL_Event event;
+int done = 0;
+
+while(SDL_PollEvent(&event)){
+        switch(event.type){
+        case SDL_WINDOWEVENT_CLOSE:
+            {
+                if(window){
+                    SDL_DestroyWindow(window);
+                    window = NULL;
+                }
+            }
+            break;
+        case SDL_KEYDOWN:
+            {
+                switch(event.key.keysym.sym)
+                    case SDLK_ESCAPE:
+                    {
+                        done = 1;
+                        break;
+                    }
+
+            }
+            break;
+        case SDL_QUIT:
+            {
+                done = 1;
+                break;
+            }
+        }
+    }
+    const uint8_t *state = SDL_GetKeyboardState(NULL);
+    if(state[SDL_SCANCODE_LEFT]){
+        game->man.x-=5;
+    }
+    if(state[SDL_SCANCODE_RIGHT]){
+        game->man.x+=5;
+    }
+    if(state[SDL_SCANCODE_UP]){
+        game->man.y-=5;
+    }
+    if(state[SDL_SCANCODE_DOWN]){
+        game->man.y+=5;
+    }
+    if(state[SDL_SCANCODE_A]){
+        game->man2.x-=5;;
+    }
+    if(state[SDL_SCANCODE_D]){
+        game->man2.x+=5;
+    }
+    if(state[SDL_SCANCODE_W]){
+        game->man2.y-=5;
+    }
+    if(state[SDL_SCANCODE_S]){
+        game->man2.y+=5;
+    }
+
+    return done;
+}
+
+void doRender(SDL_Renderer *renderer, GameState *game){
+
+SDL_SetRenderDrawColor(renderer,0,0,255,255);
+SDL_RenderClear(renderer);
+
+SDL_SetRenderDrawColor(renderer,255,255,255,255);
+SDL_Rect rect = {game->man.x,game->man.y,20,20};
+SDL_RenderFillRect(renderer,&rect);
+
+SDL_SetRenderDrawColor(renderer,0,0,0,255);
+SDL_Rect rect2 = {game->man2.x,game->man2.y,20,20};
+SDL_RenderFillRect(renderer,&rect2);
+
+int i;
+for(i=0;i<20;i++){
+SDL_SetRenderDrawColor(renderer,255,0,0,255);
+SDL_Rect enemys= {game->enemy[i].x,game->enemy[i].y,10,10};
+SDL_RenderFillRect(renderer,&enemys);
+}
+
+SDL_RenderPresent(renderer);
+}
+
+void check(GameState *game){
+
+if(game->man2.x > 660){
+game->man2.x = 0;
+}
+if(game->man.x >660){
+game->man.x = 0;
+}
+if(game->man2.x < 0){
+game->man2.x = 660;
+}
+if(game->man.x < 0){
+game->man.x = 660;
+}
+if(game->man2.y > 460){
+game->man2.y = 0;
+}
+if(game->man.y >460){
+game->man.y = 0;
+}
+if(game->man2.y < 0){
+game->man2.y = 460;
+}
+if(game->man.y < 0){
+game->man.y = 460;
+}
+
+int i;
+for(i=0;i<20;i++){
+if(game->enemy[i].x > 660){
+    game->enemy[i].x = 0;
+}
+if(game->enemy[i].x < 0){
+    game->enemy[i].x = 660;
+}
+if(game->enemy[i].y >460){
+game->enemy[i].y = 0;
+}
+if(game->enemy[i].y < 0){
+game->enemy[i].y = 460;
+}
+}
+
+}
+
+int detect(GameState *game){
+int done = 0;
+int i,j,z,x,y;
+for(y=0;y<10;y++){
+    for(x=0;x<10;x++){
+        for(z=0;z<20;z++){
+            for(j=0;j<20;j++){
+                for(i=0;i<20;i++){
+                    if((game->enemy[i].x)+x == (game->man.x)+j && (game->enemy[i].y)+y == (game->man.y)+z){
+                        done=1;
+
+                    }
+                    if((game->enemy[i].x)+x == (game->man2.x)+j && (game->enemy[i].y)+y == (game->man2.y)+z){
+                        done=1;
+
+                    }
+                }
+            }
+        }
+    }
+}
+return done;
+}
+
+void premakniEnemy(GameState *game, int a, int b,int c,int i){
+        if(a==0 && b==0 && c==0){
+            game->enemy[i].x +=game->s;
+            game->enemy[i].y +=game->s;
+        }
+        if(a==0 && b==1 && c==0){
+            game->enemy[i].x +=game->s;
+            game->enemy[i].y -=game->s;
+        }
+        if(a==1 && b==0 && c==0){
+            game->enemy[i].x -=game->s;
+            game->enemy[i].y +=game->s;
+        }
+        if(a==1 && b==1 && c==0){
+            game->enemy[i].x -=game->s;
+            game->enemy[i].y -=game->s;
+        }
+        if(a==0 && b==0 && c==1){
+            game->enemy[i].x +=game->s;
+            game->enemy[i].y +=0;
+        }
+        if(a==0 && b==1 && c==1){
+            game->enemy[i].x +=0;
+            game->enemy[i].y -=game->s;
+        }
+        if(a==1 && b==0 && c==1){
+            game->enemy[i].x -=0;
+            game->enemy[i].y +=game->s;
+        }
+        if(a==1 && b==1 && c==1){
+            game->enemy[i].x -=game->s;
+            game->enemy[i].y -=0;
+        }
+
+
+}
+
+int main ( int argc, char *argv[] ){
+int loopcount = 0;
+srand(time(NULL));
+GameState gameState;
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
+
+SDL_Init(SDL_INIT_VIDEO);
+
+gameState.man.x = 380-40;
+gameState.man.y = 240-40;
+
+gameState.man2.x = 300-40;
+gameState.man2.y = 240-40;
+
+gameState.s = 0;
+
+int i;
+int a[20];
+int b[20];
+int c[20];
+for(i=0;i<20;i++){
+    gameState.enemy[i].x = rand()%660;
+    gameState.enemy[i].y = rand()%460;
+    a[i] = rand()%2;
+    b[i] = rand()%2;
+    c[i] = rand()%2;
+}
+
+
+window = SDL_CreateWindow("My first SDL game",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,680,480,0);
+renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+
+
+
+
+int done = 0;
+SDL_Event event;
+while(!done){
+if(loopcount%1000==0 && gameState.s!=4){
+    gameState.s++;
+}
+check(&gameState);
+doRender(renderer, &gameState);
+if(processEvents(window, &gameState)==1){
+    done = 1;
+}
+if(loopcount>80){
+if(detect(&gameState)==1){
+    done = 1;
+}
+}
+for(i=0;i<20;i++){
+    premakniEnemy(&gameState,a[i],b[i],c[i],i);
+}
+loopcount++;
+}
+
+SDL_DestroyWindow(window);
+SDL_DestroyRenderer(renderer);
+SDL_Quit();
+  return 0;
+}

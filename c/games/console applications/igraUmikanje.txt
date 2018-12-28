@@ -1,0 +1,197 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#include <math.h>
+int board[24];
+int ovire[8];
+int loopcount;
+enum{empty,full,block};
+int gameover = 0;
+int loopcount = 1;
+char key;
+
+void vstopnastran(){
+    printf("\n\n\n\n\t\t\t\thi this is my game!\n\n\n\n\n\n");
+    long int i,j;
+    printf("\t\t\t\t       loading...\n\t\t\t\t");
+    for(i=0;i<20;i++){
+        for(j=0;j<(100000000);j++){
+
+        }
+        printf("%c",177);
+    }
+    getch();
+    system("cls");
+}
+
+void narediigro(){
+    int i;
+    for(i=0;i<24;i++){
+    board[i] = empty;
+    }
+}
+
+void narisiigro(){
+    int i;
+    char pices[3] =" O_";
+
+    for(i=0;i<24;i++){
+        if(i!=0 && i%3==0){
+            printf("\n\n\n\n\n\n");
+        }
+        printf("%20c",pices[board[i]]);
+    }
+
+}
+
+void narediovire(){
+int i;
+do{
+for(i=0;i<16;i++){
+ovire[i] = rand()%3;
+}
+}while(ovire[0]==ovire[1] ||
+       ovire[2]==ovire[3] ||
+       ovire[4]==ovire[5] ||
+       ovire[6]==ovire[7] ||
+       ovire[8]==ovire[9] ||
+       ovire[10]==ovire[11] ||
+       ovire[12]==ovire[13] ||
+       ovire[14]==ovire[15]);
+
+}
+
+premakniovire(){
+int i;
+for(i=0;i<(2*loopcount);i++){
+    board[ovire[i]] = empty;
+    ovire[i]+=3;
+}
+}
+
+
+
+
+void gameloop(){
+int i;
+int j = 0;
+while(gameover!=1){
+    if(loopcount==1){
+    narediovire();
+    board[22]=full;
+    }
+
+
+    while(!kbhit()){
+            if(board[21]!=full && board[22]!=full && board[23]!=full ){
+                gameover=1;
+                break;
+            }
+
+    for(i=0;i<(2*loopcount);i++){
+    board[ovire[i]] = block;
+    }
+    narisiigro();
+    premakniovire();
+            if(board[21]!=full && board[22]!=full && board[23]!=full ){
+                gameover=1;
+                break;
+            }
+    delay();
+    system("cls");
+    for(i=0;i<(2*loopcount);i++){
+    board[ovire[i]] = block;
+    }
+    narisiigro();
+            if(board[21]!=full && board[22]!=full && board[23]!=full ){
+                gameover=1;
+                break;
+            }
+    premakniovire();
+            if(board[21]!=full && board[22]!=full && board[23]!=full ){
+                gameover=1;
+                break;
+            }
+    delay();
+    system("cls");
+    for(i=0;i<8;i++){
+    if(ovire[i]==24){
+        ovire[i]=2;
+    }
+    if(ovire[i]==25){
+        ovire[i]=0;
+    }
+    if(ovire[i]==26){
+        ovire[i]=1;
+    }
+    }
+
+    if(loopcount!=4){
+    loopcount++;
+    }
+
+    j++;
+
+    }
+    key = getch();
+    if(key=='a'){
+        board[21]=full;
+        if(board[22]==full){
+        board[22]=empty;
+        }
+        if(board[23]==full){
+        board[23]=empty;
+        }
+
+    }
+    if(key=='s'){
+        board[22]=full;
+        if(board[23]==full){
+        board[23]=empty;
+        }
+        if(board[21]==full){
+        board[21]=empty;
+        }
+
+    }
+    if(key=='d'){
+        board[23]=full;
+        if(board[21]==full){
+        board[21]=empty;
+        }
+        if(board[22]==full){
+        board[22]=empty;
+        }
+
+    }
+
+
+}
+if(gameover){
+    system("cls");
+    printf("\n\n\n\n\t\t\t\tGAME OVER!!!\n");
+    printf("\t\t\t\tscore:%d",j);
+    getch();
+}
+
+}
+
+void delay(){
+long int i;
+for(i=0;i<(175000000);i++){
+}
+
+}
+
+int main(){
+srand(time(NULL));
+vstopnastran();
+narediigro();
+printf("\npress any key to start\nuse a,s,d to move\ngood luck");
+getch();
+system("cls");
+gameloop();
+
+return 0;
+}

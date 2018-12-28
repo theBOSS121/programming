@@ -1,0 +1,750 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <SDL2/SDL.h>
+
+int time0 = 0;
+int time1 = 0;
+int time0inc = 0;
+int time1inc = 0;
+int score0 = 0;
+int score1 = 0;
+
+typedef struct{
+int x;
+int y;
+int onBoard;
+int xploded;
+int timer;
+}Bomb;
+
+typedef struct{
+int x;
+int y;
+int onBoard;
+Bomb bomb[3];
+}Player;
+
+typedef struct{
+int x;
+int y;
+int onBoard;
+}Rblocks;
+
+typedef struct{
+int x;
+int y;
+}Blocks;
+
+typedef struct{
+Player player[2];
+Blocks blocks[67];
+Rblocks rblocks[35];
+}GameState;
+
+//zaznava gumbe in caka ce bo pritisnen krizec za zepretiokno ali pa esc key
+int processEvents(SDL_Window *window, GameState *game){
+SDL_Event event;
+int done = 0;
+while(SDL_PollEvent(&event)){
+        switch(event.type){
+        case SDL_WINDOWEVENT_CLOSE:
+            {
+                if(window){
+                    SDL_DestroyWindow(window);
+                    window = NULL;
+                }
+            }
+            break;
+        case SDL_KEYDOWN:
+            {
+                switch(event.key.keysym.sym)
+                    case SDLK_ESCAPE:
+                    {
+                        done = 3;
+                        break;
+                    }
+
+            }
+            break;
+        case SDL_QUIT:
+            {
+                done = 3;
+                break;
+            }
+        }
+
+}
+
+    return done;
+}
+//rise igro
+void doRender(SDL_Renderer *renderer, GameState *game){
+    int i;
+    //draw beckround
+    SDL_SetRenderDrawColor(renderer,255,255,255,255);
+    SDL_RenderClear(renderer);
+
+    if(game->player[0].onBoard == 1){
+    SDL_SetRenderDrawColor(renderer,0,255,0,255);
+    SDL_Rect rect = {game->player[0].x,game->player[0].y,40,40};
+    SDL_RenderFillRect(renderer,&rect);
+    }
+    if(game->player[1].onBoard == 1){
+    SDL_SetRenderDrawColor(renderer,0,0,255,255);
+    SDL_Rect rect1 = {game->player[1].x,game->player[1].y,40,40};
+    SDL_RenderFillRect(renderer,&rect1);
+    }
+    for(i=0;i<3;i++){
+    if(game->player[1].bomb[i].onBoard == 1){
+    if(game->player[1].bomb[i].xploded == 0){
+    SDL_SetRenderDrawColor(renderer,0,0,0,255);
+    SDL_Rect rect4 = {game->player[1].bomb[i].x,game->player[1].bomb[i].y,40,40};
+    SDL_RenderFillRect(renderer,&rect4);
+    }else{
+    SDL_SetRenderDrawColor(renderer,255,0,0,255);
+    SDL_Rect rect5 = {game->player[1].bomb[i].x-80,game->player[1].bomb[i].y,200,40};
+    SDL_RenderFillRect(renderer,&rect5);
+    SDL_Rect rect6 = {game->player[1].bomb[i].x,game->player[1].bomb[i].y-80,40,200};
+    SDL_RenderFillRect(renderer,&rect6);
+    }
+    }
+    if(game->player[0].bomb[i].onBoard == 1){
+    if(game->player[0].bomb[i].xploded == 0){
+    SDL_SetRenderDrawColor(renderer,0,0,0,255);
+    SDL_Rect rect4 = {game->player[0].bomb[i].x,game->player[0].bomb[i].y,40,40};
+    SDL_RenderFillRect(renderer,&rect4);
+    }else{
+    SDL_SetRenderDrawColor(renderer,255,0,0,255);
+    SDL_Rect rect5 = {game->player[0].bomb[i].x-80,game->player[0].bomb[i].y,200,40};
+    SDL_RenderFillRect(renderer,&rect5);
+    SDL_Rect rect6 = {game->player[0].bomb[i].x,game->player[0].bomb[i].y-80,40,200};
+    SDL_RenderFillRect(renderer,&rect6);
+    }
+    }
+    }
+    for(i=0;i<67;i++){
+    SDL_SetRenderDrawColor(renderer,128,128,128,255);
+    SDL_Rect rect3 = {game->blocks[i].x+5,game->blocks[i].y+5,40,40};
+    SDL_RenderFillRect(renderer,&rect3);
+    }
+    for(i=0;i<35;i++){
+    if(game->rblocks[i].onBoard == 1){
+    SDL_SetRenderDrawColor(renderer,205,133,63,255);
+    SDL_Rect rect4 = {game->rblocks[i].x+5,game->rblocks[i].y+5,40,40};
+    SDL_RenderFillRect(renderer,&rect4);
+    }
+    }
+    //narise na window
+    SDL_RenderPresent(renderer);
+}
+
+void initGame(GameState *game){
+    int i;
+    //init players
+    game->player[1].x = 5;
+    game->player[1].y = 5;
+    game->player[1].onBoard = 1;
+    game->player[0].x = 700;
+    game->player[0].y = 600;
+    game->player[0].onBoard = 1;
+    //inti bombs
+    for(i=0;i<3;i++){
+    game->player[0].bomb[i].x = -200;
+    game->player[0].bomb[i].y = -200;
+    game->player[0].bomb[i].onBoard = 0;
+    game->player[0].bomb[i].xploded = 0;
+    game->player[0].bomb[i].timer = 0;
+    game->player[1].bomb[i].x = -200;
+    game->player[1].bomb[i].y = -200;
+    game->player[1].bomb[i].onBoard = 0;
+    game->player[1].bomb[i].xploded = 0;
+    game->player[1].bomb[i].timer = 0;
+    }
+    //init blocks
+    game->blocks[0].x = 50;
+    game->blocks[0].y = 50;
+    game->blocks[1].x = 150;
+    game->blocks[1].y = 50;
+    game->blocks[2].x = 200;
+    game->blocks[2].y = 50;
+    game->blocks[3].x = 300;
+    game->blocks[3].y = 50;
+    game->blocks[4].x = 350;
+    game->blocks[4].y = 50;
+    game->blocks[5].x = 400;
+    game->blocks[5].y = 50;
+    game->blocks[6].x = 500;
+    game->blocks[6].y = 50;
+    game->blocks[7].x = 550;
+    game->blocks[7].y = 50;
+    game->blocks[8].x = 650;
+    game->blocks[8].y = 50;
+    game->blocks[9].x = 50;
+    game->blocks[9].y = 100;
+    game->blocks[10].x = 650;
+    game->blocks[10].y = 100;
+    game->blocks[11].x = 50;
+    game->blocks[11].y = 150;
+    game->blocks[12].x = 100;
+    game->blocks[12].y = 150;
+    game->blocks[13].x = 150;
+    game->blocks[13].y = 150;
+    game->blocks[14].x = 200;
+    game->blocks[14].y = 150;
+    game->blocks[15].x = 300;
+    game->blocks[15].y = 150;
+    game->blocks[16].x = 350;
+    game->blocks[16].y = 150;
+    game->blocks[17].x = 400;
+    game->blocks[17].y = 150;
+    game->blocks[18].x = 500;
+    game->blocks[18].y = 150;
+    game->blocks[19].x = 550;
+    game->blocks[19].y = 150;
+    game->blocks[20].x = 600;
+    game->blocks[20].y = 150;
+    game->blocks[21].x = 650;
+    game->blocks[21].y = 150;
+    game->blocks[22].x = 200;
+    game->blocks[22].y = 200;
+    game->blocks[23].x = 500;
+    game->blocks[23].y = 200;
+    game->blocks[24].x = 50;
+    game->blocks[24].y = 250;
+    game->blocks[25].x = 100;
+    game->blocks[25].y = 250;
+    game->blocks[26].x = 300;
+    game->blocks[26].y = 250;
+    game->blocks[27].x = 350;
+    game->blocks[27].y = 250;
+    game->blocks[28].x = 400;
+    game->blocks[28].y = 250;
+    game->blocks[29].x = 600;
+    game->blocks[29].y = 250;
+    game->blocks[30].x = 650;
+    game->blocks[30].y = 250;
+    game->blocks[31].x = 200;
+    game->blocks[31].y = 300;
+    game->blocks[32].x = 300;
+    game->blocks[32].y = 300;
+    game->blocks[33].x = 350;
+    game->blocks[33].y = 300;
+    game->blocks[34].x = 400;
+    game->blocks[34].y = 300;
+    game->blocks[35].x = 500;
+    game->blocks[35].y = 300;
+    game->blocks[36].x = 50;
+    game->blocks[36].y = 350;
+    game->blocks[37].x = 100;
+    game->blocks[37].y = 350;
+    game->blocks[38].x = 300;
+    game->blocks[38].y = 350;
+    game->blocks[39].x = 350;
+    game->blocks[39].y = 350;
+    game->blocks[40].x = 400;
+    game->blocks[40].y = 350;
+    game->blocks[41].x = 600;
+    game->blocks[41].y = 350;
+    game->blocks[42].x = 650;
+    game->blocks[42].y = 350;
+    game->blocks[43].x = 200;
+    game->blocks[43].y = 400;
+    game->blocks[44].x = 500;
+    game->blocks[44].y = 400;
+    game->blocks[45].x = 50;
+    game->blocks[45].y = 450;
+    game->blocks[46].x = 100;
+    game->blocks[46].y = 450;
+    game->blocks[47].x = 150;
+    game->blocks[47].y = 450;
+    game->blocks[48].x = 200;
+    game->blocks[48].y = 450;
+    game->blocks[49].x = 300;
+    game->blocks[49].y = 450;
+    game->blocks[50].x = 350;
+    game->blocks[50].y = 450;
+    game->blocks[51].x = 400;
+    game->blocks[51].y = 450;
+    game->blocks[52].x = 500;
+    game->blocks[52].y = 450;
+    game->blocks[53].x = 550;
+    game->blocks[53].y = 450;
+    game->blocks[54].x = 600;
+    game->blocks[54].y = 450;
+    game->blocks[55].x = 650;
+    game->blocks[55].y = 450;
+    game->blocks[56].x = 50;
+    game->blocks[56].y = 500;
+    game->blocks[57].x = 650;
+    game->blocks[57].y = 500;
+    game->blocks[58].x = 50;
+    game->blocks[58].y = 550;
+    game->blocks[59].x = 150;
+    game->blocks[59].y = 550;
+    game->blocks[60].x = 200;
+    game->blocks[60].y = 550;
+    game->blocks[61].x = 300;
+    game->blocks[61].y = 550;
+    game->blocks[62].x = 350;
+    game->blocks[62].y = 550;
+    game->blocks[63].x = 400;
+    game->blocks[63].y = 550;
+    game->blocks[64].x = 500;
+    game->blocks[64].y = 550;
+    game->blocks[65].x = 550;
+    game->blocks[65].y = 550;
+    game->blocks[66].x = 650;
+    game->blocks[66].y = 550;
+    for(i=0;i<35;i++){
+        game->rblocks[i].onBoard = 1;
+    }
+    game->rblocks[0].x = 100;
+    game->rblocks[0].y = 0;
+    game->rblocks[1].x = 150;
+    game->rblocks[1].y = 0;
+    game->rblocks[2].x = 250;
+    game->rblocks[2].y = 0;
+    game->rblocks[3].x = 400;
+    game->rblocks[3].y = 0;
+    game->rblocks[4].x = 550;
+    game->rblocks[4].y = 0;
+    game->rblocks[5].x = 600;
+    game->rblocks[5].y = 0;
+    game->rblocks[6].x = 700;
+    game->rblocks[6].y = 0;
+    game->rblocks[7].x = 250;
+    game->rblocks[7].y = 100;
+    game->rblocks[8].x = 350;
+    game->rblocks[8].y = 100;
+    game->rblocks[9].x = 450;
+    game->rblocks[9].y = 100;
+    game->rblocks[10].x = 0;
+    game->rblocks[10].y = 150;
+    game->rblocks[11].x = 700;
+    game->rblocks[11].y = 150;
+    game->rblocks[12].x = 300;
+    game->rblocks[12].y = 200;
+    game->rblocks[13].x = 400;
+    game->rblocks[13].y = 200;
+    game->rblocks[14].x = 600;
+    game->rblocks[14].y = 200;
+    game->rblocks[15].x = 0;
+    game->rblocks[15].y = 250;
+    game->rblocks[16].x = 200;
+    game->rblocks[16].y = 250;
+    game->rblocks[17].x = 500;
+    game->rblocks[17].y = 250;
+    game->rblocks[18].x = 700;
+    game->rblocks[18].y = 250;
+    game->rblocks[19].x = 150;
+    game->rblocks[19].y = 300;
+    game->rblocks[20].x = 450;
+    game->rblocks[20].y = 300;
+    game->rblocks[21].x = 600;
+    game->rblocks[21].y = 300;
+    game->rblocks[22].x = 700;
+    game->rblocks[22].y = 300;
+    game->rblocks[23].x = 0;
+    game->rblocks[23].y = 400;
+    game->rblocks[24].x = 300;
+    game->rblocks[24].y = 400;
+    game->rblocks[25].x = 450;
+    game->rblocks[25].y = 400;
+    game->rblocks[26].x = 700;
+    game->rblocks[26].y = 400;
+    game->rblocks[27].x = 100;
+    game->rblocks[27].y = 500;
+    game->rblocks[28].x = 250;
+    game->rblocks[28].y = 500;
+    game->rblocks[29].x = 600;
+    game->rblocks[29].y = 500;
+    game->rblocks[30].x = 100;
+    game->rblocks[30].y = 600;
+    game->rblocks[31].x = 300;
+    game->rblocks[31].y = 600;
+    game->rblocks[32].x = 400;
+    game->rblocks[32].y = 600;
+    game->rblocks[33].x = 450;
+    game->rblocks[33].y = 600;
+    game->rblocks[34].x = 600;
+    game->rblocks[34].y = 600;
+}
+
+void detect50x50(GameState *game,int x,int y){
+int i;
+for(i=0;i<2;i++){
+    if(game->player[i].x+40>x+5 && game->player[i].x+40<x+25 && game->player[i].y>y+5-40 && game->player[i].y<y-5+40){
+        game->player[i].x = x-35;
+    }
+    if(game->player[i].x<x+45 && game->player[i].x>x+25 && game->player[i].y>y+5-40 && game->player[i].y<y-5+40){
+        game->player[i].x = x+45;
+    }
+    if(game->player[i].x>x+5-40 && game->player[i].x<x-5+40 && game->player[i].y+40>y+5 && game->player[i].y+40<y+25){
+        game->player[i].y = y-35;
+    }
+    if(game->player[i].x>x+5-40 && game->player[i].x<x-5+40 && game->player[i].y<y+45 && game->player[i].y>y+25){
+        game->player[i].y = y+45;
+    }
+
+}
+}
+
+void stopMoving(GameState *game){
+    if(game->player[0].x < 0){
+        game->player[0].x = 0;
+    }
+    if(game->player[0].x > 710){
+        game->player[0].x = 710;
+    }
+    if(game->player[0].y < 0){
+        game->player[0].y = 0;
+    }
+    if(game->player[0].y > 610){
+        game->player[0].y = 610;
+    }
+    if(game->player[1].x < 0){
+        game->player[1].x = 0;
+    }
+    if(game->player[1].x > 710){
+        game->player[1].x = 710;
+    }
+    if(game->player[1].y < 0){
+        game->player[1].y = 0;
+    }
+    if(game->player[1].y > 610){
+        game->player[1].y = 610;
+    }
+    detect50x50(game,50,50);
+    detect50x50(game,150,50);
+    detect50x50(game,200,50);
+    detect50x50(game,300,50);
+    detect50x50(game,350,50);
+    detect50x50(game,400,50);
+    detect50x50(game,500,50);
+    detect50x50(game,550,50);
+    detect50x50(game,650,50);
+    detect50x50(game,50,100);
+    detect50x50(game,650,100);
+    detect50x50(game,50,150);
+    detect50x50(game,100,150);
+    detect50x50(game,150,150);
+    detect50x50(game,200,150);
+    detect50x50(game,300,150);
+    detect50x50(game,350,150);
+    detect50x50(game,400,150);
+    detect50x50(game,500,150);
+    detect50x50(game,550,150);
+    detect50x50(game,600,150);
+    detect50x50(game,650,150);
+    detect50x50(game,200,200);
+    detect50x50(game,500,200);
+    detect50x50(game,50,250);
+    detect50x50(game,100,250);
+    detect50x50(game,300,250);
+    detect50x50(game,350,250);
+    detect50x50(game,400,250);
+    detect50x50(game,600,250);
+    detect50x50(game,650,250);
+    detect50x50(game,200,300);
+    detect50x50(game,300,300);
+    detect50x50(game,350,300);
+    detect50x50(game,400,300);
+    detect50x50(game,500,300);
+    detect50x50(game,50,350);
+    detect50x50(game,100,350);
+    detect50x50(game,300,350);
+    detect50x50(game,350,350);
+    detect50x50(game,400,350);
+    detect50x50(game,600,350);
+    detect50x50(game,650,350);
+    detect50x50(game,200,400);
+    detect50x50(game,500,400);
+    detect50x50(game,50,450);
+    detect50x50(game,100,450);
+    detect50x50(game,150,450);
+    detect50x50(game,200,450);
+    detect50x50(game,300,450);
+    detect50x50(game,350,450);
+    detect50x50(game,400,450);
+    detect50x50(game,500,450);
+    detect50x50(game,550,450);
+    detect50x50(game,600,450);
+    detect50x50(game,650,450);
+    detect50x50(game,50,500);
+    detect50x50(game,650,500);
+    detect50x50(game,50,550);
+    detect50x50(game,150,550);
+    detect50x50(game,200,550);
+    detect50x50(game,300,550);
+    detect50x50(game,350,550);
+    detect50x50(game,400,550);
+    detect50x50(game,500,550);
+    detect50x50(game,550,550);
+    detect50x50(game,650,550);
+    int i,j;
+    for(i=0;i<35;i++){
+        if(game->rblocks[i].onBoard == 1){
+            detect50x50(game,game->rblocks[i].x,game->rblocks[i].y);
+        }
+    }
+    for(j=0;j<2;j++){
+        for(i=0;i<3;i++){
+            if(game->player[j].bomb[i].onBoard == 1){
+            detect50x50(game,game->player[j].bomb[i].x-5,game->player[j].bomb[i].y-5);
+            }
+        }
+    }
+}
+
+void keyboardInput(GameState *game){
+int i;
+const uint8_t *state = SDL_GetKeyboardState(NULL);
+if(game->player[0].onBoard == 1){
+    if(state[SDL_SCANCODE_P]){
+        if(time0inc == 0){
+        for(i=0;i<3;i++){
+            if(game->player[0].bomb[i].onBoard != 1){
+                game->player[0].bomb[i].x = game->player[0].x;
+                game->player[0].bomb[i].y = game->player[0].y;
+                game->player[0].bomb[i].onBoard = 1;
+                time0inc = 1;
+                break;
+            }
+        }
+        }
+    }
+}
+    if(state[SDL_SCANCODE_LEFT]){
+        game->player[0].x-=5;
+    }
+    else if(state[SDL_SCANCODE_RIGHT]){
+        game->player[0].x+=5;
+    }
+    else if(state[SDL_SCANCODE_UP]){
+        game->player[0].y-=5;
+    }
+    else if(state[SDL_SCANCODE_DOWN]){
+        game->player[0].y+=5;
+    }
+    if(state[SDL_SCANCODE_A]){
+        game->player[1].x-=5;;
+    }
+    else if(state[SDL_SCANCODE_D]){
+        game->player[1].x+=5;
+    }
+    else if(state[SDL_SCANCODE_W]){
+        game->player[1].y-=5;
+    }
+    else if(state[SDL_SCANCODE_S]){
+        game->player[1].y+=5;
+    }
+    if(game->player[1].onBoard == 1){
+    if(state[SDL_SCANCODE_SPACE]){
+        if(time1inc == 0){
+        for(i=0;i<3;i++){
+            if(game->player[1].bomb[i].onBoard != 1){
+                game->player[1].bomb[i].x = game->player[1].x;
+                game->player[1].bomb[i].y = game->player[1].y;
+                game->player[1].bomb[i].onBoard = 1;
+                time1inc = 1;
+                break;
+            }
+        }
+        }
+    }
+    }
+if(time0inc == 1){
+    time0++;
+}
+if(time0>10){
+    time0 = 0;
+    time0inc = 0;
+}
+if(time1inc == 1){
+    time1++;
+}
+if(time1>10){
+    time1 = 0;
+    time1inc = 0;
+}
+}
+
+void timetoexploe(GameState *game){
+    int i,j;
+    for(j=0;j<2;j++){
+        for(i=0;i<3;i++){
+            if(game->player[j].bomb[i].onBoard == 1){
+                game->player[j].bomb[i].timer++;
+                if(game->player[j].bomb[i].timer>160 && game->player[j].bomb[i].xploded == 0){
+                    game->player[j].bomb[i].xploded = 1;
+                }else if(game->player[j].bomb[i].timer>170 && game->player[j].bomb[i].xploded == 1){
+                    game->player[j].bomb[i].onBoard = 0;
+                    game->player[j].bomb[i].xploded = 0;
+                    game->player[j].bomb[i].timer = 0;
+                }
+            }
+        }
+    }
+}
+
+int  maneplode(GameState *game){
+int i,j,l,done = 0;
+int m,wrong = 0;
+for(l=0;l<2;l++){
+    for(i=0;i<2;i++){
+        for(j=0;j<3;j++){
+            if(game->player[l].onBoard == 1 && game->player[l].x+40>game->player[i].bomb[j].x-80 &&
+               game->player[l].x<game->player[i].bomb[j].x+120 && game->player[l].y+40>game->player[i].bomb[j].y&&
+               game->player[l].y<game->player[i].bomb[j].y+40 && game->player[i].bomb[j].xploded == 1){
+                for(m=0;m<67;m++){
+                    if(game->player[l].x < game->blocks[m].x &&
+                       game->blocks[m].x < game->player[i].bomb[j].x &&
+                       game->player[i].bomb[j].y+15 > game->blocks[m].y &&
+                       game->player[i].bomb[j].y+15 < game->blocks[m].y+45 ){
+                        wrong = 1;
+                       }
+                    if(game->player[l].x > game->blocks[m].x &&
+                       game->blocks[m].x > game->player[i].bomb[j].x &&
+                       game->player[i].bomb[j].y+15 > game->blocks[m].y &&
+                       game->player[i].bomb[j].y+15 < game->blocks[m].y+45 ){
+                        wrong = 1;
+                       }
+                       if(m<35){
+                        if(game->player[l].x < game->rblocks[m].x &&
+                        game->rblocks[m].x < game->player[i].bomb[j].x &&
+                        game->player[i].bomb[j].y+15 > game->rblocks[m].y &&
+                        game->player[i].bomb[j].y+15 < game->rblocks[m].y+45 ){
+                        wrong = 1;
+                       }
+                        if(game->player[l].x > game->rblocks[m].x &&
+                        game->rblocks[m].x > game->player[i].bomb[j].x &&
+                        game->player[i].bomb[j].y+15 > game->rblocks[m].y &&
+                        game->player[i].bomb[j].y+15 < game->rblocks[m].y+45 ){
+                        wrong = 1;
+                       }
+                       }
+                }
+
+
+
+                if(wrong == 0){
+                game->player[l].onBoard = 0;
+                if(l==0){
+                score0++;
+                }else{
+                score1++;
+                }
+                system("cls");
+                printf("%d : %d",score0,score1);
+                done = 1;
+                }
+            }
+            if(game->player[l].onBoard == 1 && game->player[l].x+40>game->player[i].bomb[j].x &&
+               game->player[l].x<game->player[i].bomb[j].x+40 && game->player[l].y+40>game->player[i].bomb[j].y-80&&
+               game->player[l].y<game->player[i].bomb[j].y+120 && game->player[i].bomb[j].xploded == 1){
+                for(m=0;m<67;m++){
+                    if(game->player[l].y < game->blocks[m].y &&
+                       game->blocks[m].y < game->player[i].bomb[j].y &&
+                       game->player[i].bomb[j].x+15 > game->blocks[m].x &&
+                       game->player[i].bomb[j].x+15 < game->blocks[m].x+45 ){
+                        wrong = 1;
+                       }
+                    if(game->player[l].y > game->blocks[m].y &&
+                       game->blocks[m].y > game->player[i].bomb[j].y &&
+                       game->player[i].bomb[j].x+15 > game->blocks[m].x &&
+                       game->player[i].bomb[j].x+15 < game->blocks[m].x+45 ){
+                        wrong = 1;
+                       }
+                if(m<35){
+                    if(game->player[l].y < game->rblocks[m].y &&
+                       game->rblocks[m].y < game->player[i].bomb[j].y &&
+                       game->player[i].bomb[j].x+15 > game->rblocks[m].x &&
+                       game->player[i].bomb[j].x+15 < game->rblocks[m].x+45 ){
+                        wrong = 1;
+                       }
+                    if(game->player[l].y > game->rblocks[m].y &&
+                       game->rblocks[m].y > game->player[i].bomb[j].y &&
+                       game->player[i].bomb[j].x+15 > game->rblocks[m].x &&
+                       game->player[i].bomb[j].x+15 < game->rblocks[m].x+45 ){
+                        wrong = 1;
+                       }
+                }
+                }
+                if(wrong == 0){
+                game->player[l].onBoard = 0;
+                if(l==0){
+                score0++;
+                }else{
+                score1++;
+                }
+                system("cls");
+                printf("%d : %d",score0,score1);
+                done = 1;
+                }
+            }
+        }
+    }
+}
+for(l=0;l<35;l++){
+    for(i=0;i<2;i++){
+        for(j=0;j<3;j++){
+                if(game->rblocks[l].onBoard == 1 && game->rblocks[l].x+40>game->player[i].bomb[j].x-80 &&
+               game->rblocks[l].x<game->player[i].bomb[j].x+120 && game->rblocks[l].y+40>game->player[i].bomb[j].y&&
+               game->rblocks[l].y<game->player[i].bomb[j].y+35 && game->player[i].bomb[j].xploded == 1){
+                game->rblocks[l].onBoard = 0;
+               }if(game->rblocks[l].onBoard == 1 && game->rblocks[l].x+40>game->player[i].bomb[j].x &&
+               game->rblocks[l].x<game->player[i].bomb[j].x+35 && game->rblocks[l].y+40>game->player[i].bomb[j].y-80&&
+               game->rblocks[l].y<game->player[i].bomb[j].y+120 && game->player[i].bomb[j].xploded == 1){
+                game->rblocks[l].onBoard = 0;
+        }
+        }
+    }
+}
+
+return done;
+}
+
+int main ( int argc, char *argv[] ){
+srand(time(NULL));
+int done = 0;
+int loopcounter = 0;
+GameState game;
+initGame(&game);
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
+SDL_Init(SDL_INIT_VIDEO);
+window = SDL_CreateWindow("bomb it",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,750,650,0);
+renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+while(!done){
+done = processEvents(window,&game);
+if(done == 3){
+    break;
+}
+
+done = maneplode(&game);
+doRender(renderer,&game);
+keyboardInput(&game);
+stopMoving(&game);
+timetoexploe(&game);
+loopcounter++;
+}
+if(done == 1){
+SDL_Delay(1000);
+SDL_DestroyWindow(window);
+SDL_DestroyRenderer(renderer);
+SDL_Quit();
+main(0,0);
+}
+if(done != 1){
+SDL_DestroyWindow(window);
+SDL_DestroyRenderer(renderer);
+SDL_Quit();
+}
+
+  return 0;
+}
+
+
+

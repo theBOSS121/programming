@@ -1,0 +1,324 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <SDL2/SDL.h>
+
+int score = 0;
+
+typedef struct{
+int x;
+int y;
+int onBoard;
+int value;
+}Blocks;
+
+typedef struct{
+int dir;
+Blocks blocks[16];
+}GameState;
+
+//zaznava gumbe in caka ce bo pritisnen krizec za zepretiokno ali pa esc key
+int processEvents(SDL_Window *window, GameState *game){
+SDL_Event event;
+int done = 0;
+while(SDL_PollEvent(&event)){
+        switch(event.type){
+        case SDL_WINDOWEVENT_CLOSE:
+            {
+                if(window){
+                    SDL_DestroyWindow(window);
+                    window = NULL;
+                }
+            }
+            break;
+        case SDL_KEYDOWN:
+            {
+                switch(event.key.keysym.sym)
+                    case SDLK_ESCAPE:
+                    {
+                        done = 3;
+                        break;
+                    }
+
+            }
+            break;
+        case SDL_QUIT:
+            {
+                done = 3;
+                break;
+            }
+        }
+
+}
+if(game->dir == -1){
+if(SDL_KEYDOWN){
+    if(event.key.keysym.sym == SDLK_RIGHT){
+        game->dir = 0;
+    }
+    if(event.key.keysym.sym == SDLK_LEFT){
+        game->dir = 1;
+    }
+    if(event.key.keysym.sym == SDLK_UP){
+        game->dir = 2;
+    }
+    if(event.key.keysym.sym == SDLK_DOWN){
+        game->dir = 3;
+    }
+}
+}
+    return done;
+}
+//rise igro
+void doRender(SDL_Renderer *renderer, GameState *game){
+    int i;
+    //draw beckround
+    SDL_SetRenderDrawColor(renderer,255,255,255,255);
+    SDL_RenderClear(renderer);
+    for(i=0;i<4;i++){
+    SDL_SetRenderDrawColor(renderer,0,0,0,255);
+    SDL_Rect rect = {0,i*160,640,1};
+    SDL_RenderFillRect(renderer,&rect);
+    SDL_Rect rect1 = {i*160,0,1,640};
+    SDL_RenderFillRect(renderer,&rect1);
+    }
+
+    for(i=0;i<16;i++){
+    if(game->blocks[i].value == 2){
+    SDL_SetRenderDrawColor(renderer,0,255,0,255);
+    }
+    if(game->blocks[i].value == 4){
+    SDL_SetRenderDrawColor(renderer,0,0,255,255);
+    }
+    if(game->blocks[i].value == 8){
+    SDL_SetRenderDrawColor(renderer,255,0,0,255);
+    }
+    if(game->blocks[i].value == 16){
+    SDL_SetRenderDrawColor(renderer,255,255,0,255);
+    }
+    if(game->blocks[i].value == 32){
+    SDL_SetRenderDrawColor(renderer,0,255,255,255);
+    }
+    if(game->blocks[i].value == 64){
+    SDL_SetRenderDrawColor(renderer,255,0,255,255);
+    }
+    if(game->blocks[i].value == 128){
+    SDL_SetRenderDrawColor(renderer,155,155,15,255);
+    }
+    if(game->blocks[i].value == 256){
+    SDL_SetRenderDrawColor(renderer,155,15,155,255);
+    }
+    if(game->blocks[i].value == 512){
+    SDL_SetRenderDrawColor(renderer,15,155,155,255);
+    }
+    if(game->blocks[i].value == 1024){
+    SDL_SetRenderDrawColor(renderer,100,50,100,255);
+    }
+    if(game->blocks[i].value == 2048){
+    SDL_SetRenderDrawColor(renderer,255,255,255,255);
+    }
+    SDL_Rect rect = {game->blocks[i].x+1,game->blocks[i].y+1,159,159};
+    SDL_RenderFillRect(renderer,&rect);
+    }
+    //narise na window
+    SDL_RenderPresent(renderer);
+}
+
+void initGame(GameState *game){
+    int i;
+    for(i=0;i<16;i++){
+    game->blocks[i].x = -160;
+    game->blocks[i].y = -160;
+    game->blocks[i].onBoard = 0;
+    game->blocks[i].value = 2;
+    }
+    game->dir = -2;
+}
+
+int movingBlocks(GameState *game){
+    int i,j = 0;
+    int notdone = 0;
+    int done = 0;
+    int valid = 1;
+    for(i=0;i<16;i++){
+        if(game->blocks[i].onBoard == 1){
+            for(j=0;j<16;j++){
+                if(game->dir == 0 && (game->blocks[i].x+160 == game->blocks[j].x &&
+                    game->blocks[i].y ==game->blocks[j].y) && game->blocks[i].value != game->blocks[j].value){
+                    valid = 0;
+                    break;
+                }
+                if(game->dir == 1 && (game->blocks[i].x-160 == game->blocks[j].x &&
+                    game->blocks[i].y ==game->blocks[j].y) && game->blocks[i].value != game->blocks[j].value){
+                    valid = 0;
+                    break;
+                }
+                if(game->dir == 2 && (game->blocks[i].x == game->blocks[j].x &&
+                    game->blocks[i].y-160 ==game->blocks[j].y) && game->blocks[i].value != game->blocks[j].value){
+                    valid = 0;
+                    break;
+                }
+                if(game->dir == 3 && (game->blocks[i].x == game->blocks[j].x &&
+                    game->blocks[i].y+160 ==game->blocks[j].y) && game->blocks[i].value != game->blocks[j].value){
+                    valid = 0;
+                    break;
+                }
+
+            }
+
+        if(valid == 1){
+        if(game->dir == 0){
+            if(game->blocks[i].x != 640-160){
+            game->blocks[i].x += 20;
+            game->blocks[i].y += 0;
+                notdone = 1;
+            }
+        }
+        if(game->dir == 1){
+            if(game->blocks[i].x != 0){
+            game->blocks[i].x -= 20;
+            game->blocks[i].y += 0;
+                notdone = 1;
+            }
+        }
+        if(game->dir == 2){
+            if(game->blocks[i].y != 0){
+            game->blocks[i].x += 0;
+            game->blocks[i].y -= 20;
+                notdone = 1;
+            }
+        }
+        if(game->dir == 3){
+            if(game->blocks[i].y != 640-160){
+            game->blocks[i].x += 0;
+            game->blocks[i].y += 20;
+                notdone = 1;
+            }
+        }
+        }
+    }
+    valid = 1;
+    }
+    if(notdone != 1){
+        done = 1;
+        game->dir = -2;
+    }
+return done;
+}
+
+int blocksOnBoard(GameState *game){
+    int i;
+    int randomx = -1;
+    int randomy = -1;
+    int wrong = 0;
+    int onBoard = 0;
+    do{
+        wrong = 0;
+        randomx = rand()%4;
+        randomy = rand()%4;
+        for(i=0;i<16;i++){
+            if(game->blocks[i].onBoard == 1 ){
+                if(game->blocks[i].x == randomx*160 && game->blocks[i].y == randomy*160 ){
+                    wrong = 1;
+                    break;
+                }
+            }
+        }
+
+    }while(wrong);
+
+    for(i=0;i<16;i++){
+        if(game->blocks[i].onBoard == 0){
+            game->blocks[i].x = randomx * 160;
+            game->blocks[i].y = randomy * 160;
+            game->blocks[i].onBoard = 1;
+            onBoard = 1;
+            break;
+        }
+    }
+return onBoard;
+}
+void valuechanger(GameState *game){
+int i,j;
+for(i=0;i<16;i++){
+    for(j=0;j<16;j++){
+        if(i==j){
+            if(j==15){
+                break;
+            }else{
+            j++;
+            }
+        }
+        if(game->blocks[i].x == game->blocks[j].x && game->blocks[i].y == game->blocks[j].y &&
+           game->blocks[i].onBoard==1 && game->blocks[j].onBoard == 1){
+            score += game->blocks[i].value;
+            game->blocks[i].value *= 2;
+            game->blocks[j].value = (rand()%2+1)*2;
+            game->blocks[j].onBoard = 0;
+            game->blocks[j].x = -160;
+            game->blocks[j].y = -160;
+        }
+    }
+}
+}
+
+
+int main ( int argc, char *argv[] ){
+srand(time(NULL));
+int done = 0;
+int loopcounter = 0;
+int dir = -1;
+int endmove = 0;
+int time = -1;
+GameState game;
+initGame(&game);
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
+SDL_Init(SDL_INIT_VIDEO);
+window = SDL_CreateWindow("2048",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,640,640,0);
+renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+int moveisdone = 1;
+
+while(!done){
+if(game.dir==-1 || game.dir==-2)
+done = processEvents(window,&game);
+
+doRender(renderer,&game);
+if(game.dir == -2){
+blocksOnBoard(&game);
+game.dir = -1;
+}
+if(game.dir!=-2 && game.dir !=-1){
+endmove = movingBlocks(&game);
+time++;
+}
+if(endmove==1){
+    if(time<3){
+    game.dir = -1;
+    }else{
+    game.dir = -2;
+    }
+    time = -1;
+}
+valuechanger(&game);
+loopcounter++;
+}
+if(done !=3){
+SDL_Delay(1000);
+}
+SDL_DestroyWindow(window);
+SDL_DestroyRenderer(renderer);
+SDL_Quit();
+printf("game over!!!\n");
+printf("your score is:%d\n",score);
+printf("if you want to play again press 'y' key\n");
+char key = getch();
+system("cls");
+if(key =='y'){
+score = 0;
+main(0,0);
+}
+  return 0;
+}
+
+
+

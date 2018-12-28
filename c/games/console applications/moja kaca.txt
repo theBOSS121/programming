@@ -1,0 +1,270 @@
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include <conio.h>
+#include<time.h>
+#include<ctype.h>
+#include <time.h>
+#include <windows.h>
+#include <process.h>
+
+void premakniKurzor();
+void narisiProstor();
+void gameLoop();
+char key;
+int x,y;
+void narisiKaco();
+int headx = 6;
+int heady = 6;
+int bodyx[400];
+int bodyy[400];
+int dolzinaKace = 0;
+int directionx = -1;
+int directiony = 0;
+void delay();
+int hranax = 50;
+int hranay = 6;
+void preveri();
+int life=5;
+int konec=0;
+int a;
+
+
+int main()  {
+    srand(time(NULL));
+if(konec==1){
+system("cls");
+printf("\t\t\tgame over\n\n\t\t\tyour score is:%d",dolzinaKace);
+return 0;
+}
+if(headx==hranax&&heady==hranay){
+    dolzinaKace++;
+
+do{
+    hranax = rand()%66+4;
+    hranay = rand()%18+3;
+}while(hranay==7 ||hranay==17 ||hranay==12 ||hranax==13 || hranax==62);
+    premakniKurzor(hranax,hranay);
+    printf("+");
+}
+preveri();
+    if(key=='q'){
+        printf("konec igre");
+
+        return 0;
+    }
+    if(key=='s'){
+      //dol;
+      directionx=0;
+      directiony=-1;
+    }
+    if(key=='w'){
+      //gor;
+      directionx=0;
+      directiony=1;
+    }
+    if(key=='a'){
+      //levo;
+      directionx=1;
+      directiony=0;
+    }
+    if(key=='d'){
+      //desno;
+      directionx=-1;
+      directiony=0;
+    }
+
+narisiProstor();
+headx+=directionx*-1;
+heady+=directiony*-1;
+narisiKaco();
+premakniKurzor(hranax,hranay);
+printf("+");
+if(headx==hranax&&heady==hranay){
+    dolzinaKace++;
+
+do{
+    hranax = rand()%66+4;
+    hranay = rand()%18+3;
+}while(hranay==7 ||hranay==17 ||hranay==12 || hranax==13|| hranax==62);
+    premakniKurzor(hranax,hranay);
+    printf("+");
+}
+preveri();
+
+if(konec==0){
+   gameLoop();
+}
+
+return 0;
+}
+
+void gameLoop(){
+while(!kbhit()){
+if(konec==1){
+system("cls");
+printf("\t\t\tgame over\n\n\t\t\tyour score is:%d",dolzinaKace);
+return 0;
+}
+delay();
+headx+=directionx*-1;
+heady+=directiony*-1;
+system("cls");
+narisiKaco();
+narisiProstor();
+premakniKurzor(hranax,hranay);
+printf("+");
+    if(headx==hranax&&heady==hranay){
+    dolzinaKace++;
+        do{
+    hranax = rand()%66+4;
+    hranay = rand()%18+3;
+        }while(hranay==7 ||hranay==17 ||hranay==12||hranax==13||hranax==62);
+    premakniKurzor(hranax,hranay);
+    printf("+");
+    }
+preveri();
+
+}
+if(headx==hranax&&heady==hranay){
+    dolzinaKace++;
+do{
+    hranax = rand()%66+4;
+    hranay = rand()%18+3;
+}while(hranay==7 ||hranay==17 ||hranay==12||hranax==13||hranax==62);
+    premakniKurzor(hranax,hranay);
+    printf("+");
+}
+if(konec==1){
+system("cls");
+printf("\t\t\tgame over\n\n\t\t\tyour score is:%d",dolzinaKace);
+return 0;
+}
+preveri();
+key=getch();
+system("cls");
+main();
+}
+
+
+
+
+
+void premakniKurzor(int x,int y){
+ COORD coord;
+ coord.X = x;
+ coord.Y = y;
+ SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
+
+void narisiProstor(){
+int i;
+        for(i=3;i<73;i++){
+            premakniKurzor(i,2);
+            printf("-");
+            premakniKurzor(i,22);
+            printf("-");
+        }
+        for(i=7;i<20;i++){
+            premakniKurzor(i,12);
+            printf("-");
+        }for(i=24;i<36;i++){
+            premakniKurzor(i,12);
+            printf("-");
+        }for(i=40;i<52;i++){
+            premakniKurzor(i,12);
+            printf("-");
+        }for(i=56;i<69;i++){
+            premakniKurzor(i,12);
+            printf("-");
+        }for(i=28;i<48;i++){
+            premakniKurzor(i,7);
+            printf("-");
+        }for(i=28;i<48;i++){
+            premakniKurzor(i,17);
+            printf("-");
+        }
+
+        for(i=2;i<23;i++){
+            premakniKurzor(3,i);
+            printf("|");
+            premakniKurzor(73,i);
+            printf("|");
+        }for(i=2;i<5;i++){
+            premakniKurzor(13,i);
+            printf("|");
+
+        }for(i=8;i<17;i++){
+            premakniKurzor(13,i);
+            printf("|");
+
+        }for(i=20;i<23;i++){
+            premakniKurzor(13,i);
+            printf("|");
+
+        }
+        for(i=2;i<5;i++){
+            premakniKurzor(62,i);
+            printf("|");
+
+        }for(i=8;i<17;i++){
+            premakniKurzor(62,i);
+            printf("|");
+
+        }for(i=20;i<23;i++){
+            premakniKurzor(62,i);
+            printf("|");
+
+        }
+premakniKurzor(30,1);
+printf("score:%d\tlife:%d",dolzinaKace,life);
+
+
+}
+
+void narisiKaco(){
+premakniKurzor(headx,heady);
+printf("X");
+    premakniKurzor(bodyx[0] = headx+(directionx),bodyy[0]= heady+(directiony));
+    printf("O");
+
+}
+void delay(){
+long int i;
+for(i=0;i<(50000000);i++){}
+
+}
+
+void preveri(){
+int i;
+for(i=3;i<74;i++)
+if(heady==2 || heady==22 || headx==3 || headx==73
+   || headx==13&& heady==2|| headx==13&& heady==3 || headx==13&& heady==4
+   || headx==62&& heady==2|| headx==62&& heady==3 || headx==62&& heady==4
+   || headx==13&& heady==20|| headx==13&& heady==21 || headx==13&& heady==22
+   || headx==62&& heady==20|| headx==62&& heady==21 || headx==62&& heady==22
+   || headx==13&& heady==8|| headx==13&& heady==9 || headx==13&& heady==10 || headx==13&& heady==11|| headx==13&& heady==12 || headx==13&& heady==13 || headx==13&& heady==14|| headx==13&& heady==15 || headx==13&& heady==16
+   || headx==62&& heady==8|| headx==62&& heady==9 || headx==62&& heady==10 || headx==62&& heady==11|| headx==62&& heady==12 || headx==62&& heady==13 || headx==62&& heady==14|| headx==62&& heady==15 || headx==62&& heady==16
+
+   || headx==28&& heady==7 || headx==29&& heady==7 || headx==30&& heady==7|| headx==31&& heady==7 || headx==32&& heady==7 || headx==33&& heady==7|| headx==34&& heady==7 || headx==35&& heady==7|| headx==36&& heady==7|| headx==37&& heady==7 || headx==38&& heady==7 || headx==39&& heady==7|| headx==40&& heady==7 || headx==41&& heady==7 || headx==42&& heady==7|| headx==43&& heady==7 || headx==44&& heady==7|| headx==45&& heady==7|| headx==46&& heady==7 || headx==47&& heady==7
+   || headx==28&& heady==17 || headx==29&& heady==17 || headx==30&& heady==17|| headx==31&& heady==17 || headx==32&& heady==17 || headx==33&& heady==17|| headx==34&& heady==17 || headx==35&& heady==17|| headx==36&& heady==17|| headx==37&& heady==17 || headx==38&& heady==17 || headx==39&& heady==17|| headx==40&& heady==17 || headx==41&& heady==17 || headx==42&& heady==17|| headx==43&& heady==17 || headx==44&& heady==17|| headx==45&& heady==17|| headx==46&& heady==17 || headx==47&& heady==17
+   || headx==7&& heady==12 || headx==8&& heady==12 || headx==9&& heady==12|| headx==10&& heady==12 || headx==11&& heady==12 || headx==12&& heady==12|| headx==13&& heady==12 || headx==14&& heady==12|| headx==15&& heady==12|| headx==16&& heady==12 || headx==17&& heady==12 || headx==18&& heady==12|| headx==19&& heady==12
+   || headx==24&& heady==12 || headx==25&& heady==12 || headx==26&& heady==12|| headx==27&& heady==12 || headx==28&& heady==12 || headx==29&& heady==12|| headx==30&& heady==12 || headx==31&& heady==12|| headx==32&& heady==12|| headx==33&& heady==12 || headx==34&& heady==12 || headx==35&& heady==12
+   || headx==40&& heady==12 || headx==41&& heady==12 || headx==42&& heady==12|| headx==43&& heady==12 || headx==44&& heady==12 || headx==45&& heady==12|| headx==46&& heady==12 || headx==47&& heady==12|| headx==48&& heady==12|| headx==49&& heady==12 || headx==50&& heady==12 || headx==51&& heady==12
+   || headx==56&& heady==12 || headx==57&& heady==12 || headx==58&& heady==12|| headx==59&& heady==12 || headx==60&& heady==12 || headx==61&& heady==12|| headx==62&& heady==12 || headx==63&& heady==12|| headx==64&& heady==12|| headx==65&& heady==12 || headx==66&& heady==12 || headx==67&& heady==12|| headx==68&& heady==12 ){
+
+    life--;
+    if(life==0){
+    konec=1;
+    }
+
+    headx=6;
+    heady=6;
+    key='d';
+    main();
+}
+
+
+
+}

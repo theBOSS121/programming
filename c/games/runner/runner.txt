@@ -1,0 +1,236 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <SDL2/SDL.h>
+
+int time0 = 0;
+int score0 = 0;
+int score1 = 0;
+
+typedef struct{
+    int x;
+    int y;
+    int dead;
+} Player;
+
+typedef struct{
+    int x;
+    int y;
+    int onScreen;
+} Blocks;
+
+typedef struct{
+    Player player;
+    Blocks blocks[20];
+} GameState;
+
+//zaznava gumbe in caka ce bo pritisnen krizec za zepretiokno ali pa esc key
+int processEvents(SDL_Window *window, GameState *game){
+    SDL_Event event;
+    int done = 0;
+    while(SDL_PollEvent(&event))
+    {
+        switch(event.type)
+        {
+        case SDL_WINDOWEVENT_CLOSE:
+        {
+            if(window)
+            {
+                SDL_DestroyWindow(window);
+                window = NULL;
+            }
+        }
+        break;
+        case SDL_KEYDOWN:
+        {
+            switch(event.key.keysym.sym)
+            case SDLK_ESCAPE:
+        {
+            done = 3;
+            break;
+            }
+
+        }
+        break;
+        case SDL_QUIT:
+        {
+            done = 3;
+            break;
+        }
+        }
+
+    }
+
+    return done;
+}
+//rise igro
+void doRender(SDL_Renderer *renderer, GameState *game){
+    int i;
+    //draw beckround
+    SDL_SetRenderDrawColor(renderer,255,255,255,255);
+    SDL_RenderClear(renderer);
+
+    if(game->player.dead == 0){
+        SDL_SetRenderDrawColor(renderer,0,0,0,255);
+        SDL_Rect rect = {game->player.x,game->player.y,50,80};
+        SDL_RenderFillRect(renderer,&rect);
+    }else{
+        SDL_SetRenderDrawColor(renderer,255,0,0,255);
+        SDL_Rect rect = {game->player.x,game->player.y,50,80};
+        SDL_RenderFillRect(renderer,&rect);
+    }
+    for(i=0;i<20;i++){
+    if(game->blocks[i].onScreen == 1){
+        SDL_SetRenderDrawColor(renderer,0,255,0,255);
+        SDL_Rect rect = {game->blocks[i].x,game->blocks[i].y,50,50};
+        SDL_RenderFillRect(renderer,&rect);
+    }
+    }
+    SDL_SetRenderDrawColor(renderer,0,0,255,255);
+    SDL_Rect rect = {0,350+80,750,80};
+    SDL_RenderFillRect(renderer,&rect);
+    SDL_RenderPresent(renderer);
+}
+
+void initGame(GameState *game){
+    //init players
+    int i;
+    game->player.x = 140;
+    game->player.y = 350;
+    game->player.dead = 0;
+    for(i=0;i<20;i++){
+    game->blocks[i].x = 750;
+    game->blocks[i].y = 350+80-50;
+    game->blocks[i].onScreen = 0;
+    }
+}
+
+int keyboardInput(GameState *game){
+    int jumping = 0;
+    const uint8_t *state = SDL_GetKeyboardState(NULL);
+    if(game->player.dead == 0){
+        if(state[SDL_SCANCODE_SPACE]){
+            jumping = 1;
+        }
+    }
+    return jumping;
+}
+
+void blockmove(GameState *game){
+    int i;
+    for(i=0;i<20;i++){
+         if(game->blocks[i].onScreen == 0){
+               game->blocks[i].onScreen = 1;
+               break;
+         }
+    }
+
+}
+
+void moving(GameState *game){
+    int i;
+    for(i=0;i<20;i++){
+        if(game->blocks[i].onScreen == 1){
+               game->blocks[i].x-=8;
+               if(game->blocks[i].x == -50){
+                game->blocks[i].x = 750;
+                game->blocks[i].onScreen = 0;
+               }
+         }
+    }
+}
+
+int dead(GameState *game){
+    int i;
+    int dead = 0;
+    for(i=0;i<20;i++){
+        if(game->blocks[i].onScreen == 1){
+            if(game->player.x+50 > game->blocks[i].x &&
+               game->player.x < game->blocks[i].x+50 &&
+               game->player.y+80 > game->blocks[i].y){
+                   dead = 1;
+                   game->player.dead = 1;
+                   break;
+               }
+        }
+    }
+    return dead;
+}
+
+int main ( int argc, char *argv[] )
+{
+    srand(time(NULL));
+    int done = 0;
+    int loopcounter = 0;
+    int jumping = 0;
+    int falling = 0;
+    int gravity = 20;
+    int timer = rand()%100;
+    GameState game;
+    initGame(&game);
+    SDL_Window *window = NULL;
+    SDL_Renderer *renderer = NULL;
+    SDL_Init(SDL_INIT_VIDEO);
+    window = SDL_CreateWindow("runner",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,750,500,0);
+    renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+    while(!done){
+        done = processEvents(window,&game);
+        if(done == 3){
+            break;
+        }
+        if(!jumping && !falling){
+        jumping = keyboardInput(&game);
+        }
+        if(jumping){
+            game.player.y -= gravity;
+            gravity--;
+            if(gravity == 0){
+                jumping = 0;
+                falling = 1;
+            }
+        }
+        if(falling){
+            game.player.y += gravity;
+            gravity+=1;
+            if(game.player.y > 350){
+                falling = 0;
+                game.player.y = 350;
+                gravity = 20;
+            }
+        }
+        if(timer==loopcounter){
+            blockmove(&game);
+            timer+=rand()%100+5;
+        }
+        moving(&game);
+        done = dead(&game);
+        loopcounter++;
+        doRender(renderer,&game);
+    }
+    if(done == 1)
+    {
+        SDL_Delay(1000);
+        SDL_DestroyWindow(window);
+        SDL_DestroyRenderer(renderer);
+        SDL_Quit();
+        printf("game over!!!\n");
+        printf("your score is:%d\n",loopcounter);
+        printf("if you want to play again press 'y' key\n");
+        char key = getch();
+        system("cls");
+        if(key =='y'){
+            score0 = 0;
+            score1 = 0;
+            time0 = 0;
+            main(0,0);
+        }
+    }
+    if(done != 1){
+        SDL_DestroyWindow(window);
+        SDL_DestroyRenderer(renderer);
+        SDL_Quit();
+    }
+
+    return 0;
+}

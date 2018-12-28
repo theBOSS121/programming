@@ -1,0 +1,172 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <windows.h>
+#include <time.h>
+
+int indexx = 1;
+int indexy = -1;
+int score = 0;
+
+void gotoXY(int x,int y){
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),coord);
+}
+
+void narisiOkvir(int score){
+    //bordarji
+    int i;
+    for(i=2;i<78;i++){
+        gotoXY(i,2);
+        printf("%c",219);
+        gotoXY(i,55);
+        printf("%c",219);
+    }
+    for(i=2;i<56;i++){
+        gotoXY(1,i);
+        printf("%c",219);
+        gotoXY(78,i);
+        printf("%c",219);
+    }
+    gotoXY(0,0);
+    printf("%d",score);
+}
+
+void narisiPaddle(int *paddle[]){
+int i;
+for(i=0;i<10;i++){
+    gotoXY(paddle[i],52);
+    printf("%c",219);
+}
+}
+
+void premakniPaddle(char key,int paddle[]){
+int i;
+if(key=='a'){
+    if(paddle[0]>2){
+    for(i=0;i<10;i++){
+        paddle[i]-=2;
+    }
+    }
+}
+if(key=='d'){
+    if(paddle[9]<77){
+    for(i=0;i<10;i++){
+        paddle[i]+=2;
+    }
+    }
+}
+}
+
+void narisiZogo(int ballx, int bally){
+    gotoXY(ballx,bally);
+    printf("%c",219);
+
+}
+
+void premakniZogo(int *ballx,int *bally){
+*ballx+=indexx;
+*bally+=indexy;
+}
+
+
+void gameloop(){
+
+int i;
+int paddle[10] = {34,35,36,37,38,39,40,41,42,43};
+char key;
+int ballx = (rand()%70)+4;
+int bally = rand()%35+15;
+
+while(1){
+
+    narisiOkvir(score);
+    narisiPaddle(&paddle[0]);
+    narisiZogo(ballx,bally);
+    premakniZogo(&ballx,&bally);
+
+    do{
+    if(ballx<3 ||ballx>75){
+        indexx*=-1;
+    }
+
+    if(bally<4 ){
+        indexy*=-1;
+    }
+    for(i=0;i<10;i++){
+    if(bally ==51 && ballx==paddle[i]){
+        indexy*=-1;
+        score++;
+    }
+    }
+    system("cls");
+    narisiZogo(ballx,bally);
+    premakniZogo(&ballx,&bally);
+    narisiOkvir(score);
+    narisiPaddle(&paddle[0]);
+    if(bally>52){
+        system("cls");
+        printf("\t\t\t\t     ");
+        for(i=0;i<100000000;i++){}
+        printf("G");
+        for(i=0;i<100000000;i++){}
+        printf("A");
+        for(i=0;i<100000000;i++){}
+        printf("M");
+        for(i=0;i<100000000;i++){}
+        printf("E");
+        for(i=0;i<100000000;i++){}
+        printf(" ");
+        printf("O");
+        for(i=0;i<100000000;i++){}
+        printf("V");
+        for(i=0;i<100000000;i++){}
+        printf("E");
+        for(i=0;i<100000000;i++){}
+        printf("R");
+        printf("\n\n\n\n\t\t\t\t your score is: %d",score);
+        for(i=0;i<1000000000;i++){}
+        getch();
+
+        exit(0);
+    }
+    }while(!kbhit());
+    if(ballx<3 ||ballx>75){
+        indexx*=-1;
+    }
+
+    if(bally<4 ){
+        indexy*=-1;
+    }
+    for(i=0;i<10;i++){
+    if(bally ==51 && ballx==paddle[i]){
+        indexy*=-1;
+        score++;
+    }
+    }
+    key = getch();
+    premakniPaddle(key,&paddle[0]);
+    system("cls");
+}
+
+}
+
+
+
+int main(){
+srand(time(NULL));
+int i = rand()%2;
+if(i==0){
+    indexx=1;
+}
+if(i==1){
+    indexx=-1;
+}
+printf("\t\t\t\t     Hallo!!!\n\n\n\n\n\n\n\n\t\t\t\t This is pong game\n\n\n\n\n\n\n\n\t\t\t\tmaximize the screen\n\n\n\n\n\n\n\n\t\t\t     move with 'a' and 'd' keys");
+getch();
+gameloop();
+return 0;
+}
