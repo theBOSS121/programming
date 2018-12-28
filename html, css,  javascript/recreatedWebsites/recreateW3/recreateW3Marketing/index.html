@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Title</title>
+<link rel="stylesheet" href="style.css" />
+<script defer src="https://use.fontawesome.com/releases/v5.5.0/js/all.js" integrity="sha384-GqVMZRt5Gn7tB9D9q7ONtcp4gtHIUEW/yG7h98J7IpE3kpi+srfFyyB/04OV6pG0" crossorigin="anonymous"></script>
+</head>
+<body>
+	<header> 
+		<nav> 
+			<ul> 
+				<li><a href="#home">Home</a></li>
+				<li><a href="#plans">Plans</a></li>
+				<li><a href="#about">About</a></li>
+				<li><a href="#contact">Contact</a></li>
+			</ul>
+		</nav>
+	</header>
+	
+	<div class="wrapper"> 	
+		<section id="home"> 
+			<h1>Marketing</h1>
+			<p class="center">Template by w3.css</p>
+			<div class="slideshow"> 
+				<img src="img/coffee.jpg" alt="" />
+				<p>Lorem ipsum</p>
+				<div class="controls"> 
+					<a href="#" onclick="changeL()" class="leftbtn"><i class="fas fa-arrow-alt-circle-left"></i></a>
+					<a href="#" onclick="change1()" class="rect"><i class="fas fa-square"></i></a>
+					<a href="#" onclick="change2()" class="rect"><i class="far fa-square"></i></a>
+					<a href="#" onclick="change3()" class="rect"><i class="far fa-square"></i></a>
+					<a href="#" onclick="changeR()" class="rightbtn"><i class="fas fa-arrow-alt-circle-right"></i></a>
+				</div>
+			</div>
+			<h2>What We Offer</h2>
+			<div class="boxes"> 
+				<div class="box"> 
+					<h3>Design</h3>
+					<p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+				</div>
+				<div class="box"> 
+					<h3>Branding</h3>
+					<p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+				</div>
+				<div class="box"> 
+					<h3>Consultation</h3>
+					<p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+				</div>
+				<div class="box"> 
+					<h3>Promises</h3>
+					<p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+				</div>
+			</div>
+		</section>
+		
+		<section id="plans"> 		
+			<h3>Pricing plans</h3>
+			<p class="bmarg">Choose a pricing plan that fits your needs.</p>			
+			<div class="plw"> 
+				<div class="plan"> 
+					<h3>Basic</h3>
+					<p><span class="bold">10GB</span> Storage</p>			
+					<p><span class="bold">10</span> Emails</p>			
+					<p><span class="bold">10</span> Domains</p>			
+					<p><span class="bold">Endless</span> support</p>
+					<p class="money">$ 10</p>
+					<p class="grey">per month</p>
+					<div class="space-around"> 
+						<a href="">Sign Up</a>
+					</div>
+				</div>
+			</div>
+			<div class="plw"> 
+				<div class="plan"> 
+					<h3 class="grey">Pro</h3>
+					<p><span class="bold">25GB</span> Storage</p>			
+					<p><span class="bold">25</span> Emails</p>			
+					<p><span class="bold">25</span> Domains</p>			
+					<p><span class="bold">Endless</span> support</p>
+					<p class="money">$ 25</p>
+					<p class="grey">per month</p>
+					<div class="space-around"> 
+						<a href="">Sign Up</a>
+					</div>
+				</div>
+			</div>
+			<div class="plw">
+				<div class="plan"> 
+					<h3>Premium</h3>
+					<p><span class="bold">50GB</span> Storage</p>			
+					<p><span class="bold">50</span> Emails</p>			
+					<p><span class="bold">50</span> Domains</p>			
+					<p><span class="bold">Endless</span> support</p>
+					<p class="money">$ 50</p>
+					<p class="grey">per month</p>
+					<div class="space-around"> 
+						<a href="">Sign Up</a>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="about"> 
+			<div class="container">
+				<h2>Who We Are</h2>			
+			</div>
+			<div class="plw"> 
+				<div class="people"> 
+					<img src="img/team1.jpg" alt="" />
+					<div class="pwrap"> 
+						<p class="name">Jane Doe</p>
+						<p class="position">CEO & Founder</p>
+						<p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+						<a href="">Contact</a>
+					</div>
+				</div>
+			</div>
+			<div class="plw"> 
+				<div class="people"> 
+					<img src="img/team2.jpg" alt="" />
+					<div class="pwrap"> 
+						<p class="name">Mike Ross</p>
+						<p class="position">Art Director</p>
+						<p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+						<a href="">Contact</a>
+					</div>
+				</div>
+			</div>
+			<div class="plw"> 
+				<div class="people"> 
+					<img src="img/team3.jpg" alt="" />
+					<div class="pwrap"> 
+						<p class="name">Designer</p>
+						<p class="position">CEO & Founder</p>
+						<p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+						<a href="">Contact</a>
+					</div>
+				</div>
+			</div>
+		</section>
+		
+		<section id="contact"> 
+			<div class="container">
+				<h2>Contact Us</h2>
+			</div>
+			<p>Name</p>
+			<input type="text" />
+			<p>Email</p>
+			<input type="text" />
+			<p>Subject</p>
+			<input type="text" />
+			<p>Message</p>
+			<input type="text" />
+			<input type="submit" value="Send" />		
+		</section>
+	</div>
+	
+	<footer> 
+		<h4>Footer</h4>
+		<a class="to-top" href="#"><i class="fas fa-arrow-up"></i> To the top</a>
+		<div class="icons"> 
+			<i class="fab fa-facebook"></i>
+			<i class="fab fa-instagram"></i>
+			<i class="fab fa-snapchat"></i>
+			<i class="fab fa-pinterest-p"></i>
+			<i class="fab fa-twitter"></i>
+			<i class="fab fa-linkedin-in"></i>
+		</div>
+		<p>Powered by <a href="#">w3.css</a></p>
+	</footer>
+	
+	<script type="text/javascript"> 
+		function changeL() {
+			var img = document.getElementsByTagName("img")[0];
+			if(img.getAttribute('src') == "img/coffee.jpg") {
+				img.src = "img/sound.jpg";
+				document.getElementsByClassName("fa-square")[0].classList.add('far');
+				document.getElementsByClassName("fa-square")[0].classList.remove('fas');
+				document.getElementsByClassName("fa-square")[1].classList.add('far');
+				document.getElementsByClassName("fa-square")[1].classList.remove('fas');
+				document.getElementsByClassName("fa-square")[2].classList.add('fas');
+				document.getElementsByClassName("fa-square")[2].classList.remove('far');
+			}else if(img.getAttribute('src') == "img/sound.jpg") {
+				img.src = "img/workbench.jpg"
+				document.getElementsByClassName("fa-square")[0].classList.add('far');
+				document.getElementsByClassName("fa-square")[0].classList.remove('fas');
+				document.getElementsByClassName("fa-square")[1].classList.add('fas');
+				document.getElementsByClassName("fa-square")[1].classList.remove('far');
+				document.getElementsByClassName("fa-square")[2].classList.add('far');
+				document.getElementsByClassName("fa-square")[2].classList.remove('fas');
+			}else {
+				img.src = "img/coffee.jpg";
+				document.getElementsByClassName("fa-square")[0].classList.add('fas');
+				document.getElementsByClassName("fa-square")[0].classList.remove('far');
+				document.getElementsByClassName("fa-square")[1].classList.add('far');
+				document.getElementsByClassName("fa-square")[1].classList.remove('fas');
+				document.getElementsByClassName("fa-square")[2].classList.add('far');
+				document.getElementsByClassName("fa-square")[2].classList.remove('fas');
+			}
+		}
+		function changeR() {
+			var img = document.getElementsByTagName("img")[0];
+			if(img.getAttribute('src') == "img/sound.jpg") {
+				img.src = "img/coffee.jpg";
+				document.getElementsByClassName("fa-square")[0].classList.add('fas');
+				document.getElementsByClassName("fa-square")[0].classList.remove('far');
+				document.getElementsByClassName("fa-square")[1].classList.add('far');
+				document.getElementsByClassName("fa-square")[1].classList.remove('fas');
+				document.getElementsByClassName("fa-square")[2].classList.add('far');
+				document.getElementsByClassName("fa-square")[2].classList.remove('fas');
+			}else if(img.getAttribute('src') == "img/coffee.jpg") {
+				img.src = "img/workbench.jpg"
+				document.getElementsByClassName("fa-square")[0].classList.add('far');
+				document.getElementsByClassName("fa-square")[0].classList.remove('fas');
+				document.getElementsByClassName("fa-square")[1].classList.add('fas');
+				document.getElementsByClassName("fa-square")[1].classList.remove('far');
+				document.getElementsByClassName("fa-square")[2].classList.add('far');
+				document.getElementsByClassName("fa-square")[2].classList.remove('fas');
+			}else {
+				img.src = "img/sound.jpg";
+				document.getElementsByClassName("fa-square")[0].classList.add('far');
+				document.getElementsByClassName("fa-square")[0].classList.remove('fas');
+				document.getElementsByClassName("fa-square")[1].classList.add('far');
+				document.getElementsByClassName("fa-square")[1].classList.remove('fas');
+				document.getElementsByClassName("fa-square")[2].classList.add('fas');
+				document.getElementsByClassName("fa-square")[2].classList.remove('far');
+			}
+		}
+		function change1() {
+			var img = document.getElementsByTagName("img")[0];
+			img.src = "img/coffee.jpg";
+			document.getElementsByClassName("fa-square")[0].classList.add('fas');
+			document.getElementsByClassName("fa-square")[0].classList.remove('far');
+			document.getElementsByClassName("fa-square")[1].classList.add('far');
+			document.getElementsByClassName("fa-square")[1].classList.remove('fas');
+			document.getElementsByClassName("fa-square")[2].classList.add('far');
+			document.getElementsByClassName("fa-square")[2].classList.remove('fas');
+		}
+		function change2() {
+			var img = document.getElementsByTagName("img")[0];
+			img.src = "img/workbench.jpg";
+			document.getElementsByClassName("fa-square")[0].classList.add('far');
+			document.getElementsByClassName("fa-square")[0].classList.remove('fas');
+			document.getElementsByClassName("fa-square")[1].classList.add('fas');
+			document.getElementsByClassName("fa-square")[1].classList.remove('far');
+			document.getElementsByClassName("fa-square")[2].classList.add('far');
+			document.getElementsByClassName("fa-square")[2].classList.remove('fas');
+		}
+		function change3() {
+			var img = document.getElementsByTagName("img")[0];
+			img.src = "img/sound.jpg";
+			document.getElementsByClassName("fa-square")[0].classList.add('far');
+			document.getElementsByClassName("fa-square")[0].classList.remove('fas');
+			document.getElementsByClassName("fa-square")[1].classList.add('far');
+			document.getElementsByClassName("fa-square")[1].classList.remove('fas');
+			document.getElementsByClassName("fa-square")[2].classList.add('fas');
+			document.getElementsByClassName("fa-square")[2].classList.remove('far');
+		}
+		
+	</script>
+	
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

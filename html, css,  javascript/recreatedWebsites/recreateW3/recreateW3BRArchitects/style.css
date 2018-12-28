@@ -1,0 +1,330 @@
+* {
+	margin:0;
+	padding:0;
+	font-family:Arial;
+	overflow-x:hidden;
+}
+
+header {
+	position:fixed;
+	top:0;
+	left:0;
+	right:0;
+	background-color:#fff;
+	z-index:2;
+	box-shadow: 0 1px 20px #666;
+}
+
+nav {
+	background-color:#fff;
+	color:#000;
+	height:54px;
+}
+
+nav a {
+	text-decoration:none;
+	color:#000;
+	font-size:1.0rem;
+	font-weight:100;
+	letter-spacing:4px;
+	float:left;
+	padding:8px 18px;
+	margin:10px 0 0 18px;
+}
+
+nav a:hover {
+	background-color:#ccc;
+}
+
+nav a span{
+	font-weight:600;
+	margin-right:10px;
+}
+
+nav ul {
+	list-style:none;
+	float:right;
+	display:none;
+}
+
+nav ul li {
+	display:inline-block;
+}
+
+nav ul li a{
+	text-decoration:none;
+}
+
+#showcase {
+	margin:auto;
+	max-width:1500px;
+	position:relative;
+	z-index:0;
+}
+
+#showcase img{
+	width:100%;
+}
+
+#showcase h1{
+	letter-spacing:4px;
+	padding:15px;
+	background-color:#000;
+	color:#fff;
+	opacity:0.75;
+	position:absolute;
+	top:55%;
+	left:50%;
+    transform: translate(-50%, -50%);
+	z-index:2;
+	font-size:2rem;
+	
+	
+}
+
+#showcase h1 span{
+	display:none;
+}
+
+.wrapper {
+	max-width:1500px;
+	width:85%;
+	margin:auto;
+}
+
+h2 {
+	padding:20px 0;
+	border-bottom:1px solid #f1f1f1;
+	margin:45px 0;
+	font-weight:100;
+	font-size:1.4rem;
+}
+
+#projects .box {
+	position:relative;
+	width:100%;
+	margin:15px 0;
+}
+
+#projects .box img{
+	width:100%;
+	height:100%;
+	display:block;
+}
+
+#projects .box p{
+	position:absolute;
+	background-color:#000;
+	color:#fff;
+	padding:10px;
+	font-size:1rem;
+	letter-spacing:1px;
+}
+
+#about .minus-margin{
+	margin-top:-25px;
+	line-height:1.4rem;
+	letter-spacing:1px;
+	font-size:0.9rem;
+}
+
+#about .people{	
+	width:100%;
+	margin:40px 0;
+}
+
+
+#about .people img{	
+	width:100%;
+	height:100%;
+    filter: grayscale(70%);
+}
+
+#about .people h3{	
+	font-size:1.5rem;
+	font-weight:100;
+	margin:10px 0;
+}
+
+#about .people h4{	
+	font-size:0.95rem;
+	font-weight:100;
+	margin:20px 0;
+	color:#919191;
+}
+
+#about .people p{	
+	font-size:0.95rem;
+	font-weight:100;
+	margin:10px 0;
+	line-height:1.4rem;
+	letter-spacing:1px;
+}
+
+#about .people a{	
+	font-size:0.95rem;
+	font-weight:100;
+	text-decoration:none;
+	color:#000;
+	background-color:#f1f1f1;
+	display:block;
+	text-align:center;
+	padding:10px 0;
+	margin-top:15px;
+}
+
+#contact p{
+	
+	margin-top:-30px;
+	letter-spacing:1px;
+	line-height:1.4rem;
+}
+
+#contact input{
+	display:block;
+	width:100%;
+	box-sizing:border-box;
+	margin:15px 0;
+	padding:10px;
+	font-size:1rem;
+	border:1px solid #ccc;
+}
+
+#contact input::placeholder{
+	color:#9c9c9c;
+}
+
+#contact input[type=submit] {
+	margin-top:30px;
+	width:160px;
+	height:40px;
+	padding:0;
+	border:0;
+	overflow:hidden;
+	background-color:#000;
+	color:#fff;
+	margin-bottom:100px;
+}
+
+#contact input[type=submit]:hover {
+	background-color:#ccc;
+	color:#000;
+}
+
+.map {
+	margin-top:-50px;
+	margin-bottom:5px;
+}
+
+.map img{
+	width:100%;
+}
+
+footer {
+	background-color:#000;
+}
+
+footer p{
+	color:#fff;
+	padding:33px 0;
+	text-align:center;
+}
+
+footer a{
+	color:#fff;
+}
+
+footer a:hover {
+	color:#34af4b;
+}
+
+@media (min-width:600px) {
+	.wrapper {
+		width:90%;
+	}
+	
+	#showcase h1 span{
+		display:inline;
+		background-color:transparent;
+	}
+	
+	
+	nav ul{
+		display:inline;
+		margin-right:18px;
+	}
+	
+	nav ul li a{
+		margin-left:0;
+	}
+	
+	#projects .box:nth-child(even) {
+		width:50%;
+		float:left;
+		padding-right:10px;
+		box-sizing:border-box;
+		margin-bottom:15px;
+		margin-top:0px;
+	}
+	
+	#projects .box:nth-child(odd) {
+		width:50%;
+		float:right;
+		padding-left:10px;
+		box-sizing:border-box;
+		margin-bottom:15px;
+		margin-top:0px;
+	}
+	
+	#about .people:nth-child(even) {
+		width:50%;
+		float:left;
+		padding-right:10px;
+		box-sizing:border-box;
+		margin-bottom:15px;
+		margin-top:0px;		
+	}
+	
+	#about .people:nth-child(odd) {
+		width:50%;
+		float:left;
+		padding-right:10px;
+		box-sizing:border-box;
+		margin-bottom:15px;
+		margin-top:0px;		
+	}
+	
+	#about .minus-margin {
+		margin-bottom:50px;
+	}
+	
+	#contact {
+		margin-top:20px;
+	}
+}
+
+@media (min-width:1000px) {
+	
+	#projects .box {
+		width:25% !important;
+		margin:0 !important;
+		float:left !important;
+		padding:10px ;
+	}
+	
+	#about .people {
+		width:25% !important;
+		margin:0 !important;
+		float:left !important;
+		padding:10px ;
+	}
+	
+}
+
+
+
+
+
+
+
+

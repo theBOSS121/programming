@@ -1,0 +1,408 @@
+*{
+	margin:0px;
+	padding:0px;
+	font-family:calibri;
+	scroll-behavior:smooth;
+}
+
+nav{
+	position:fixed;
+	top:0;
+	left:0;
+	right:0;
+	background-color:#000;
+	transition:all 0.3s ease-in-out;
+	z-index:10;
+}
+
+main {
+	/* padding-top:45px; */
+	border-top:45px solid #000;
+}
+
+nav li{
+	float:left;
+	list-style:none;
+}
+
+nav li a {
+	font-size:18px;
+	padding:12px 20px;
+	line-height:45px;
+	color:#fff;
+	text-decoration:none;
+	transition:0.2s all ease-in-out;
+}
+
+nav li a:hover {
+	color:#111;
+	background-color:#ccc;
+}
+
+nav ul li ul li{
+	clear:both;
+	display:none;
+}
+
+nav ul li:hover ul li{
+	clear:both;
+	display:block;
+	z-index:-1;
+}
+
+section .imgbg{
+	background: url("img/chicago.jpg") no-repeat;
+	width:100%;
+	padding-bottom:14%;
+	background-size:100%;
+}
+
+.wrapper {
+	max-width:1000px;
+	margin:0 auto;
+}
+
+section .imgbg h3{
+	padding-top:30%;
+	text-align:center;
+	font-size:28px;
+	font-weight:400;
+	color:#fff;
+	text-shadow:2px 2px 5px #111;
+}
+
+section .imgbg p{
+	text-align:center;
+	font-size:16px;
+	font-weight:800;
+	color:#fff;
+	text-shadow:2px 2px 5px #111;
+}
+
+#band {
+	width:100%;
+}
+
+#band h2{
+	text-align:center;
+	font-weight:300;
+	font-size:36px;
+	padding:50px 0 15px;
+	letter-spacing:3px;
+}
+
+#band h3{
+	text-align:center;
+	font-weight:100;
+	font-size:18px;
+	padding:0 0 20px;
+	font-style:italic;
+}
+
+#band p{
+	text-align:justify;
+	font-size:17px;
+	line-height:22px;
+	padding:0 20px;
+}
+
+
+
+#band .name-img {
+	display:block;
+	width:100%;
+	margin:40px auto;
+	text-align:center;
+}
+
+
+#band .name-img h4{
+	text-align:center;
+	font-weight:400;
+	font-size:24px;
+	padding:0 0 15px;
+}
+
+#band .name-img img{
+	width:80%;
+}
+
+#tour {
+	clear:both;
+	background-color:#111;
+	overflow:hidden;
+}
+
+#tour h2 {
+	color:#fff;	
+	text-align:center;
+	font-weight:300;
+	font-size:36px;
+	padding:80px 0 15px;
+	letter-spacing:3px;
+}
+
+#tour .up p {
+	color:#bbb;
+	text-align:center;
+	font-weight:100;
+	font-size:18px;
+	padding:0 0 40px;
+	font-style:italic;
+}
+
+#tour .box {
+	background-color:#fff;
+	margin:0 auto 15% ;
+	width:90%;
+	box-sizing:border-width;
+}
+
+#tour .box div {
+	background-color:#000;
+}
+
+#tour .box img{
+	display:block;
+	width:100%;
+	padding:0;
+	margin:0;
+	transition:0.4s all ease-in-out;
+}
+
+#tour .box img:hover{
+	opacity:0.6;
+}
+
+#tour .box p{
+	color:#000;
+	text-align:left;	
+}
+
+#tour .box .city{
+	font-weight:900;
+	font-size:18px;
+	padding-left:8%;
+	padding-top:6%;
+	padding-bottom:6%;
+}
+
+#tour .box .date{
+	color:#828282;
+	font-weight:100;
+	font-size:17px;
+	padding-left:8%;
+	padding-bottom:10%;
+}
+
+#tour .box .text{
+	font-weight:500;
+	font-size:16px;
+	padding-left:8%;
+	padding-right:8%;
+	padding-bottom:6%;
+}
+
+#tour .box a{
+	display:inline-block;
+	font-weight:500;
+	font-size:16px;
+	width:70px;
+	padding:10px 20px;
+	margin-left:8%;
+	margin-bottom:10%;
+	background-color:#111;
+	color:#fff;
+	text-align:center;
+	transition:0.2s all ease-in-out;
+}
+
+#tour .box a:hover{
+	background-color:#ccc;
+	color:#111;
+}
+
+#contact h2 {
+	color:#111;	
+	text-align:center;
+	font-weight:300;
+	font-size:36px;
+	padding:80px 0 15px;
+	letter-spacing:3px;
+}
+
+#contact .up p {
+	color:#777;
+	text-align:center;
+	font-weight:100;
+	font-size:18px;
+	padding:0 0 40px;
+	font-style:italic;
+}
+
+#contact .contacts {
+	font-size:22px;
+	text-align:center;
+	margin-bottom:30px;
+}
+
+#contact form input {
+	width:80%;
+	display:block;
+	padding:10px 0;
+	margin:2% auto;
+}
+
+#contact form input::placeholder {
+	font-size:20px;
+	font-weight:300;
+	padding-left:10px;
+}
+
+#contact form .send{
+	display:block;
+	font-weight:500;
+	font-size:16px;
+	text-transform:uppercase;
+	width:75%;
+	padding:10px 0;
+	background-color:#111;
+	color:#fff;
+	text-align:center;
+	margin:0 auto 10%;
+	transition:0.2s all ease-in-out;
+}
+
+#contact form .send:hover{
+	background-color:#ccc;
+	color:#111;
+}
+
+#map {
+	clear:both;
+	height:300px;
+	width:100%;
+}
+
+footer {
+	background-color:#f3f3f3;
+	color:#999;
+	text-align:center;
+	font-size:18px;
+	padding:10% 0;
+}
+
+@media screen and (min-width:570px) {
+	#band .name-img {
+		float:left;
+		width:33%;
+		margin:80px 0;
+		text-align:center;
+	}
+
+	#band .name-img h4{
+		text-align:center;
+		font-weight:400;
+		font-size:16px;
+		padding:0 0 15px;
+	}
+
+	#band .name-img img{
+		width:130px;
+	}
+	
+	
+	#tour .box {
+		background-color:#fff;
+		float:left;
+		margin:0 0 15% 3%;
+		width:29.3%;
+		box-sizing:border-width;
+	}
+	
+	#contact .contacts {
+		float:left;
+		text-align:left;
+		font-size:22px;
+		padding:0 6%;
+	}
+	#contact .contacts p{
+		padding-top:3px;
+	}
+
+	#contact form {
+		float:right;
+	}
+	
+	#contact form input {
+		display:inline;
+		width:40%;
+		height:20px;
+		margin-top:5px;
+	}
+	
+	#contact form input::placeholder {
+		font-size:18px;
+		font-weight:300;
+	}
+
+	#contact form .message{
+		display:block;
+		width:82.5%;
+		margin-right:16%;
+		margin-bottom:20px;
+	}
+
+	#contact form .send{
+		display:block;
+		float:right;
+		font-weight:500;
+		font-size:16px;
+		text-transform:uppercase;
+		width:40px;
+		padding:10px 20px;
+		background-color:#111;
+		margin-right:16%;
+		color:#fff;
+		text-align:center;
+		margin-bottom:10%;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

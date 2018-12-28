@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>MyCSSTemlpate</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<nav>
+		<ul>
+			<li><a href="#">HOME</a></li>
+			<li><a href="#band">BAND</a></li>
+			<li><a href="#tour">TOUR</a></li>
+			<li><a href="#contact">CONTACT</a></li>
+			<!-- <li><a href="#">MORE</a> -->
+				<!-- <ul>  -->
+					<!-- <li><a href="#">A</a></li> -->
+					<!-- <li><a href="#">B</a></li> -->
+					<!-- <li><a href="#">C</a></li> -->
+				<!-- </ul> -->
+			<!-- </li> -->
+		</ul>
+	</nav>
+	<main> 
+		<section class="home">
+			<div class="imgbg">
+				<h3>Chicago</h3>
+				<p>Thank You Chicago! The night we won't forget.</p>
+			</div>
+		</section>
+		<div class="wrapper"> 
+			<section id="band">
+				<h2>THE BAND</h2>
+				<h3>We love music</h3>
+				<p>We have created a fictional band website. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+				<div class="align">
+					<div class="name-img">
+						<h4>Name</h4>
+						<img src="img/bandmember.jpg" alt="#" />
+					</div>
+					<div class="name-img">
+						<h4>Name</h4>
+						<img src="img/bandmember.jpg" alt="#" />
+					</div>
+					<div class="name-img">
+						<h4>Name</h4>
+						<img src="img/bandmember.jpg" alt="#" />
+					</div>
+				</div>
+			</section>
+			<section id="tour">
+				<div class="up"> 
+					<h2>TOUR DATES</h2>
+					<p>Remember to book your tickets!</p>
+				</div>
+				
+				<div class="align">
+					<div class="box">
+						<div> 
+						<img src="img/newyork.jpg" alt="#" />
+						</div>
+						<p class="city">New York</p>
+						<p class="date">Fri 27 Nov 2016</p>
+						<p class="text">Praesent tincidunt sed tellus ut rutrum sed vitae justo.</p>
+						<a>Buy tickets</a>
+					</div>
+					<div class="box">
+						<div> 
+						<img src="img/paris.jpg" alt="#" />
+						</div>
+						<p class="city">Parits</p>
+						<p class="date">Sat 28 Nov 2016</p>
+						<p class="text">Praesent tincidunt sed tellust rutrum sed vitae justo.</p>
+						<a>Buy tickets</a>
+					</div>
+					<div class="box">
+						<div> 
+						<img src="img/sanfran.jpg" alt="#" />
+						</div>
+						<p class="city">San Francisco</p>
+						<p class="date">Sun 29 Nov 2016</p>
+						<p class="text">Praesent tincidunt sed tellus ut rutrum sed vitae justo.</p>
+						<a>Buy tickets</a>
+					</div>
+				</div>		
+			</section>
+			<section id="contact">
+				<div class="up"> 
+				<h2>CONTACT</h2>
+				<p>Fan?Drop a note!</p>
+				</div>
+				<div class="contacts">
+					<p>Chicago, US</p>
+					<p>Phone: +00151515</p>
+					<p>Email: mail@mail.com</p>
+				</div>
+				<form action="#">
+					<input placeholder="Name"  type="text" />
+					<input placeholder="Email" type="text" />
+					<input placeholder="Message" class="message" type="text" />
+					<a class="send">Send</a>
+				</form>
+			</section>
+		</div>
+		<div id="map"></div>
+	</main>
+	<footer>
+		<p>Powered by w3.css</p>
+	</footer>
+	
+	<!-- <script type="text/javascript">  -->
+		<!-- function initMap() { -->
+			<!-- var location = {lat: 46.264576, lng: 14.603051}; -->
+			<!-- var map = new google.maps.Map(document.getElementById("map"), {  -->
+				<!-- zoom: 15,  -->
+				<!-- center: location -->
+			<!-- }); -->
+			<!-- var marker = new google.maps.Marker({ -->
+				<!-- position: location, -->
+				<!-- map: map -->
+			<!-- }); -->
+		<!-- } -->
+
+	<!-- </script> -->
+	<!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqYFAPrQYoJt5jbngWerhk0YKo1a3eGe0&callback=initMap" type="text/javascript"></script> -->
+	
+	<script type="text/javascript"> 
+		
+		var previous = window.pageYOffset;
+	
+		window.onscroll = function() {
+			var now = window.pageYOffset;
+			if(now > previous) {
+				document.getElementsByTagName('nav')[0].style.top='-100px';
+			}else {
+				document.getElementsByTagName('nav')[0].style.top='0';
+								
+			}			
+			previous = window.pageYOffset;
+		}
+	
+	</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

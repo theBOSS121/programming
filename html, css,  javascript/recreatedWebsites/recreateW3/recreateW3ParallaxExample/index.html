@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Title</title>
+<link rel="stylesheet" href="style.css" />
+<script defer src="https://use.fontawesome.com/releases/v5.5.0/js/all.js" integrity="sha384-GqVMZRt5Gn7tB9D9q7ONtcp4gtHIUEW/yG7h98J7IpE3kpi+srfFyyB/04OV6pG0" crossorigin="anonymous"></script>
+</head>
+<body>
+	
+	<header> 
+		<nav> 
+			<a onclick="closeMenu()" href="#">Home</a>
+			<ul> 
+				<li><a href="#about"><i class="fas fa-user"></i>About</a></li>
+				<li><a href="#porfolio"><i class="fas fa-th"></i>Porfolio</a></li>
+				<li><a href="#contact"><i class="fas fa-envelope"></i>Contact</a></li>
+			</ul>
+			<a class="search" href="#"><i class="fas fa-search"></i></a>
+			
+			<a class="open" onclick="openCloseSideMenu()"> 
+				<svg width="16" height="14"> 
+					<path d="M0,2 16,2" stroke="#000" stroke-width="2"/>
+					<path d="M0,7 16,7" stroke="#000" stroke-width="2"/>
+					<path d="M0,12 16,12" stroke="#000" stroke-width="2"/>
+				</svg>
+			</a>
+			
+		</nav>
+	</header>
+		<ul id="dropdown"> 
+			<li><a onclick="openCloseSideMenu()" href="#about">About</a></li>
+			<li><a onclick="openCloseSideMenu()" href="#porfolio">Porfolio</a></li>
+			<li><a onclick="openCloseSideMenu()" href="#contact">Contact</a></li>
+		</ul>
+	
+	
+	<div class="showcase" onmouseleave="changeStyle()" onmouseover="changeBack()"> 
+		<h1>My Website Logo</h1>
+	</div>
+	
+	<section id="about"> 
+		<div class="wrapper"> 
+			<h2>About Me</h2>
+			<h3>I love photography</h3>
+			<p>We have created a fictional "personal" website/blog, and our fictional character is a hobby photographer. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+			<div class="img"> 
+				<p><i class="fas fa-user"></i>My Name</p>
+				<img src="img/avatar_hat.jpg" alt="" />
+			</div>
+			<p class="hide">Welcome to my website. I am lorem ipsum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+			
+			<div class="good-at"> 
+				<h4>Im really good at:</h4>
+				<p><i class="fas fa-camera"></i>Photography</p>
+				<div class="percent"> 
+					<div class="ninety">90%</div>
+				</div>
+				<p><i class="fas fa-desktop"></i>Web Design</p>
+				<div class="percent"> 
+					<div class="eighty-five">85%</div>
+				</div>
+				<p><i class="far fa-images"></i>Photoshop</p>
+				<div class="percent"> 
+					<div class="seventy-five">75%</div>
+				</div>
+			</div>
+		</div>
+		<div class="numbers"> 
+			<div class="num"> 
+				<p class="number">14+</p>
+				<p class="text">Partners</p>
+			</div>
+			<div class="num"> 
+				<p class="number">55+</p>
+				<p class="text">Projects Done</p>
+			</div>
+			<div class="num"> 
+				<p class="number">89+</p>
+				<p class="text">Happy Clients</p>
+			</div>
+			<div class="num"> 
+				<p class="number">150+</p>
+				<p class="text">Meetings</p>
+			</div>
+			
+		</div>		
+	</section>
+	
+	<section id="porfolio"> 
+		<div class="porfolio-bg"> 
+			<h1>PORFOLIO</h1>
+		</div>
+		
+		<div class="wrapper"> 		
+			<h2>My Work</h2>
+			
+			<p>Here are some of my latest lorem work ipsum tipsum.Click on the images to make them bigger</p>
+			
+			<img src="img/p1.jpg" alt="" />
+			<img src="img/p2.jpg" alt="" />
+			<img src="img/p3.jpg" alt="" />
+			<img src="img/p4.jpg" alt="" />
+			<img src="img/p5.jpg" alt="" />
+			<img src="img/p6.jpg" alt="" />
+			<img src="img/p7.jpg" alt="" />
+			<img src="img/p8.jpg" alt="" />
+			<a class="btn"href="">Load more</a>			
+		</div>
+	</section>
+	
+	<section id="contact"> 
+		<div class="contact-bg"> 
+			<h1>Contact</h1>
+		</div>
+		<div class="wrapper"> 
+			<h2>Where i work</h2>
+			<p>i'd love your feedback!</p>
+			
+			<img src="img/map.jpg" alt="" />
+			
+			<div class="contact-info"> 
+				<p><i class="fas fa-map-marker-alt"></i>Chicago, US</p>
+				<p><i class="fas fa-phone"></i>Phone: +00 151515</p>
+				<p><i class="fas fa-envelope"></i> Email: mail@mail.com</p>
+				<p class="small">Swing by for a cup of <i class="fas fa-coffee"></i>, or leave me a note:</p>
+				
+				<input type="text" placeholder="Name"/>
+				<input type="text" placeholder="Email"/>
+				<input type="text" placeholder="Message"/>
+				<input type="submit" value="SEND MESSAGE" />
+			</div>			
+		</div>
+	</section>
+	
+	<footer> 
+		<a class="btn" href="#"><i class="fas fa-arrow-up"></i>To the top</a>
+		
+		<p>Powered by <a href="#">w3.css</a></p>
+	</footer>
+
+	
+	<script type="text/javascript">
+		function changeStyle() {
+			var header = document.getElementsByTagName("header");
+			for(var i = 0; i < header.length; i++) {
+				header[i].style.backgroundColor = "#fff";
+				header[i].style.boxShadow = "1px 0 10px #999";
+			}
+		}
+	
+		function changeBack() {
+			var header = document.getElementsByTagName("header");
+			
+			for(var i = 0; i < header.length; i++) {
+				header[i].style.backgroundColor = "transparent";
+				header[i].style.boxShadow = "none";
+			}
+		
+		}
+		
+		
+		function openCloseSideMenu() {
+			var dropDown = document.getElementById("dropdown");
+			if(dropDown.style.marginTop != "0px") {
+				dropDown.style.marginTop = "0px";
+			}else {
+				dropDown.style.marginTop = "-300px";
+			}
+			
+		}
+		
+		function closeMenu() {
+			var dropDown = document.getElementById("dropdown");
+			dropDown.style.marginTop = "-300px";		
+		}
+	
+		
+	</script>
+	
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
