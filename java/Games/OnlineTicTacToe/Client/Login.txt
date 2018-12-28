@@ -1,0 +1,17 @@
+package Client;
+
+import java.util.Scanner;
+
+public class Login {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("What's your name:");
+		String name = scanner.nextLine();
+		System.out.println("Type IP of the server:");
+		String address = scanner.nextLine();
+		System.out.println("Type port of the program on the server");
+		int port = scanner.nextInt();
+		new ClientWindow(name, address, port);
+		scanner.close();
+	}
+}

@@ -1,0 +1,159 @@
+package Server;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Server implements Runnable{
+	
+	private List<ServerClient> clients = new ArrayList<ServerClient>();
+	
+	private DatagramSocket socket;
+	private int port;
+	private boolean running = false;
+	private Thread run, send, receive;
+	private String t = "/t/";
+	private String nt = "/nt/";
+	private String ct = "/ct/";
+	
+	public Server(int port){
+		this.port = port;
+		try {
+			socket = new DatagramSocket(port);
+		} catch (SocketException e) {
+			e.printStackTrace();
+			return;
+		}
+		run = new Thread(this,"Server");
+		run.start();
+	}
+
+	public void run() {
+		running = true;
+		System.out.println("Server started on port: " + port);
+		receive();
+	}
+	
+	private void receive(){
+		receive = new Thread("Receive"){
+			public void run(){
+				while(running){
+					byte[] data = new byte[1024];
+					DatagramPacket packet = new DatagramPacket(data, data.length);
+					try {
+						socket.receive(packet);
+					}catch (SocketException e){
+					}catch (IOException e) {
+						e.printStackTrace();
+					}
+					process(packet);
+				}
+			}
+		};
+		receive.start();
+	}
+	
+	private void sendToAll(String message){
+		if(message.startsWith("/m/")){
+			String text = message.substring(3);
+			text = text.split("/e/")[0];
+			System.out.println(text);
+		}
+		for(int i = 0; i < clients.size(); i++){
+			ServerClient client = clients.get(i);
+			send(message.getBytes(),client.address, client.port);
+		}
+	}
+	
+	private void send(final byte[] data, final InetAddress address, final int port){
+		send = new Thread("Send"){
+			public void run(){
+				DatagramPacket packet = new DatagramPacket(data, data.length,
+						address, port);
+				try {
+					socket.send(packet);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		send.start();
+	}
+	
+	private void process(DatagramPacket packet){
+		String string = new String(packet.getData());
+		if(string.startsWith("/c/")){
+			int id = UniqueIdentifier.getIdentifier();
+			String name = string.split("/c/|/e/")[1];
+			System.out.println(name + "("+id+") connected");
+			clients.add(new ServerClient(name,packet.getAddress(), packet.getPort(), id));
+			if(clients.size()%2 == 0){
+				send(t.getBytes(), clients.get(clients.size()-2).address,
+						clients.get(clients.size()-2).port);
+				send(nt.getBytes(), clients.get(clients.size()-1).address,
+						clients.get(clients.size()-1).port);
+			}
+			String ID = "/c/" + id + "/e/";
+			send(ID.getBytes(), packet.getAddress(), packet.getPort());
+		}else if (string.startsWith("/m/")){
+			sendToAll(string);
+		}else if (string.startsWith("/d/")){
+			String id = string.split("/d/|/e/")[1];
+			disconect(Integer.parseInt(id), true);
+		}else if (string.startsWith("/move/")){
+			String text = string.split("/move/|/e/")[1];
+			text = text.substring(1);
+			int id = Integer.parseInt(text);
+			for(int i = 0; i < clients.size(); i++){
+				if(clients.get(i).getID() == id){
+					if(i%2==0){
+						send(string.getBytes(),clients.get(i+1).address,
+								clients.get(i+1).port);
+						send(ct.getBytes(),clients.get(i+1).address,
+								clients.get(i+1).port);
+						send(ct.getBytes(),clients.get(i).address,
+								clients.get(i).port);
+					}else{
+						send(string.getBytes(),clients.get(i-1).address,
+								clients.get(i-1).port);
+						send(ct.getBytes(),clients.get(i-1).address,
+								clients.get(i-1).port);
+						send(ct.getBytes(),clients.get(i).address,
+								clients.get(i).port);
+					}
+					break;
+				}
+			}
+		}
+		else{
+			System.out.println(string);
+		}
+	}
+	
+	private void disconect(int id, boolean status){
+		ServerClient c = null;
+		boolean existed = false;
+		for(int i = 0; i < clients.size(); i++){
+			if(clients.get(i).getID() == id){
+				c = clients.get(i);
+				clients.remove(i);
+				existed = true;
+				break;
+			}
+		}
+		if(!existed) return;
+		String message = "";
+		if(status){
+			message = "Client " + c.name.trim() + " (" + c.getID() + 
+					")@" + c.address.toString()+ ":" + c.port + " disconected.";
+		}else{
+			message = "Client " + c.name.trim() + " (" + c.getID() + 
+					")@" + c.address.toString()+ ":" + c.port + " timed out.";
+		}
+		System.out.println(message);
+	}
+}
