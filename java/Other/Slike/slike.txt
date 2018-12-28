@@ -1,0 +1,10 @@
+private Image bg;
+private Image pic;
+
+bg = new ImageIcon("C:\\Documents and Settings\\Uranic\\workspace\\GameTutorialsBuckey\\background.jpg").getImage();
+pic = new ImageIcon("C:\\Documents and Settings\\Uranic\\workspace\\GameTutorialsBuckey\\face.jpg").getImage();
+
+//background
+g.drawImage(bg,0,0,w.getWidth(),w.getHeight(),0,0,
+	bg.getWidth(null),bg.getHeight(null),null);
+g.drawImage(pic, 170, 180, null);		
