@@ -1,0 +1,196 @@
+package Server;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Server implements Runnable{
+	
+	private List<ServerClient> clients = new ArrayList<ServerClient>();
+	
+	private DatagramSocket socket;
+	private int port;
+	private boolean running = false;
+	private Thread run, send, receive;
+	private String start = "/s/";
+	private String end = "/end/";
+
+	private boolean online;
+	private static int bxpos = 287, bypos = 227,i = 0,pl1x,pl2x;
+	private static int xmot = 1,ymot = 1;
+	
+	public Server(int port){
+		this.port = port;
+		try {
+			socket = new DatagramSocket(port);
+		} catch (SocketException e) {
+			e.printStackTrace();
+			return;
+		}
+		run = new Thread(this,"Server");
+		run.start();
+	}
+
+	public void run() {
+		running = true;
+		System.out.println("Server started on port: " + port);
+		receive();
+	}
+	
+	private void gameloop(){
+		if(online){
+			i++;
+			if(i<1000) return;
+			if(i%2 == 0){		
+				bxpos += xmot;
+				bypos += ymot;
+				if(bypos + 20 > 444){
+					if(bypos > 444 + 20){
+						String lost = end + "0";
+						String win = end + "1";
+						send(lost.getBytes(),clients.get(0).address,clients.get(0).port);
+						send(win.getBytes(),clients.get(1).address,clients.get(1).port);
+						disconect(clients.get(1).getID(), true);
+						disconect(clients.get(0).getID(), true);
+					}
+					if((bxpos + 20 > pl1x) && (bxpos < pl1x + 80)){
+						ymot = -ymot;
+					}
+				}
+				//se za ta druzga
+				if(bypos < 10 + 20){
+					if(bypos + 20 < 10){
+						String lost = end + "0";
+						String win = end + "1";
+						send(win.getBytes(),clients.get(0).address,clients.get(0).port);
+						send(lost.getBytes(),clients.get(1).address,clients.get(1).port);
+						disconect(clients.get(1).getID(), true);
+						disconect(clients.get(0).getID(), true);
+					}
+					if((bxpos + 20 > pl2x) && (bxpos < pl2x + 80)){
+						ymot = -ymot;
+					}
+				}
+				//stena
+				if(bxpos + 20 > 594 || bxpos < 0){
+					xmot = -xmot;
+				}
+			}
+		}
+	}
+	
+	private void receive(){
+		receive = new Thread("Receive"){
+			public void run(){
+				while(running){
+					byte[] data = new byte[1024];
+					DatagramPacket packet = new DatagramPacket(data, data.length);
+					try {
+						socket.receive(packet);
+					}catch (SocketException e){
+					}catch (IOException e) {
+						e.printStackTrace();
+					}
+					process(packet);
+				}
+			}
+		};
+		receive.start();
+	}
+	
+	private void send(final byte[] data, final InetAddress address, final int port){
+		send = new Thread("Send"){
+			public void run(){
+				DatagramPacket packet = new DatagramPacket(data, data.length,
+						address, port);
+				try {
+					socket.send(packet);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		send.start();
+	}
+	
+	private void process(DatagramPacket packet){
+		String string = new String(packet.getData());
+		if(string.startsWith("/c/")){
+			int id = UniqueIdentifier.getIdentifier();
+			String name = string.split("/c/|/e/")[1];
+			System.out.println(name + "("+id+") connected");
+			clients.add(new ServerClient(name,packet.getAddress(), packet.getPort(), id));
+			if(clients.size()%2 == 0){
+				send(start.getBytes(), clients.get(clients.size()-2).address,
+						clients.get(clients.size()-2).port);
+				send(start.getBytes(), clients.get(clients.size()-1).address,
+				     	clients.get(clients.size()-1).port);
+				bxpos = 287;
+				bypos = 227;
+				xmot = 1;
+				ymot = 1;
+				i = 0;
+				online = true;
+			}
+			String ID = "/c/" + id + "/e/";
+			send(ID.getBytes(), packet.getAddress(), packet.getPort());
+		}else if (string.startsWith("/d/")){
+			String id = string.split("/d/|/e/")[1];
+			disconect(Integer.parseInt(id), true);
+		}else if (string.startsWith("/g/")){
+			String text = string.split("/e/")[0];
+			String text1 = text + "/b/"+bxpos + "/v/" + (474-bypos-20) + "/e/";
+			text += "/b/"+bxpos + "/v/" + bypos + "/e/";
+			String idstring = text.split("/g/|/n/")[1];
+			int id = Integer.parseInt(idstring);
+			for(int i = 0; i < clients.size(); i++){
+				if(clients.get(i).getID() == id){
+					if(i%2==0){
+						send(text1.getBytes(), clients.get(i+1).address,
+								clients.get(i+1).port);
+						pl1x = Integer.parseInt(text1.split("/n/|/b/")[1]);
+					}else{
+						send(text.getBytes(), clients.get(i-1).address,
+								clients.get(i-1).port);
+						pl2x = Integer.parseInt(text1.split("/n/|/b/")[1]);
+					}
+					break;
+				}
+			}
+			gameloop();
+		}
+		else{
+			System.out.println(string);
+		}
+	}
+
+	private void disconect(int id, boolean status){
+		ServerClient c = null;
+		boolean existed = false;
+		for(int i = 0; i < clients.size(); i++){
+			if(clients.get(i).getID() == id){
+				c = clients.get(i);
+				clients.remove(i);
+				existed = true;
+				break;
+			}
+		}
+		if(!existed) return;
+		String message = "";
+		if(status){
+			message = "Client " + c.name.trim() + " (" + c.getID() + 
+					")@" + c.address.toString()+ ":" + c.port + " disconected.";
+		}else{
+			message = "Client " + c.name.trim() + " (" + c.getID() + 
+					")@" + c.address.toString()+ ":" + c.port + " timed out.";
+		}
+		System.out.println(message);
+		if(clients.size() == 0){
+			online = false;
+		}
+	}
+}

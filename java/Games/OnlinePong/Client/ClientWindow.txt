@@ -1,0 +1,166 @@
+package Client;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+
+public class ClientWindow extends JFrame implements Runnable, ActionListener{
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private Thread listen, run;
+	private Client client;
+	private boolean running = false;
+	private static Timer timer;
+	public final static int WIDTH = 594;
+	public final static int HEIGHT = 474;
+	public final static int width = 80, height = 20;
+	public static int xpos = WIDTH / 2 - width/2, ypos = HEIGHT - height - 10, win = -1;
+	public static int oxpos = WIDTH / 2 - width/2, oypos = 10;
+	public static int bxpos = WIDTH / 2 - 10, bypos = HEIGHT / 2 -10;
+	public Renderer renderer;
+	
+	public ClientWindow(String name, String address, int port) {
+		addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				int id = e.getKeyCode();
+				if(id == KeyEvent.VK_A){
+					xpos -= 5;
+				}
+				if(id == KeyEvent.VK_D){
+					xpos += 5;
+				}
+			}
+		});
+		setTitle("Pong");
+		client = new Client(name,address,port);
+		boolean connect = client.openConnection(address);
+		if(!connect){
+			System.err.println("Connection failed!");
+		}
+		createWindow();
+		String connection = "/c/" + name + "/e/"; 
+		client.send(connection.getBytes());
+		running = true;
+		run = new Thread(this, "Running");
+		run.start();
+	}
+	
+	private void createWindow(){
+		try{
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(600,500);
+		setLocationRelativeTo(null);
+		timer = new Timer(20,this);
+		renderer = new Renderer();
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.rowWeights = new double[]{0.0};
+		gbl_contentPane.columnWeights = new double[]{0.0};
+		gbl_contentPane.columnWidths = new int[]{600};
+		gbl_contentPane.rowHeights = new int[]{500};
+		contentPane.setLayout(gbl_contentPane);
+		GridBagConstraints gbc_renderer = new GridBagConstraints();
+		gbc_renderer.gridy = 0;
+		gbc_renderer.fill = GridBagConstraints.BOTH;
+		contentPane.add(renderer, gbc_renderer);
+		
+		addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e){
+				String disconect = "/d/" + client.getID() + "/e/";
+				send(disconect);
+				running = false;
+				client.close();
+			}
+		}
+		);
+		
+		setVisible(true);
+		timer.start();
+	}
+	
+	public void run() {
+		listen();
+	}
+	
+
+	private void send(String message){
+		client.send(message.getBytes());
+	}
+	
+	public void listen(){
+		listen = new Thread("Listen"){
+			public void run(){
+				while(running){
+					String message = client.receive();
+					if(message.startsWith("/c/")){
+						client.setID(Integer.parseInt(message.split("/c/|/e/")[1]));
+					}
+					if(message.startsWith("/s/")){
+						send("/g/"+client.getID()+"/n/"+xpos+"/e/");
+					}
+					if(message.startsWith("/g/")){
+						String text = message.split("/n/|/e/")[1];
+						oxpos = Integer.parseInt(text.split("/b/")[0]);
+						bxpos = Integer.parseInt(text.split("/b/|/v/")[1]);
+						bypos = Integer.parseInt(text.split("/v/|/e/")[1]);
+						send("/g/"+client.getID()+"/n/"+xpos+"/e/");
+					}
+					if(message.startsWith("/end/")){
+						win = Integer.parseInt(message.substring(5,6));
+						System.out.println("win/lost");
+					}
+				}
+			}
+		};
+		listen.start();
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		renderer.repaint();
+	}
+
+	public static void repaint(Graphics2D g){
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, WIDTH, HEIGHT);
+		g.setColor(Color.WHITE);
+		g.fillRect(xpos, ypos, width, height);
+		g.fillRect(oxpos, oypos, width, height);
+		g.fillOval(bxpos, bypos, 20, 20);
+		g.setColor(Color.RED);
+		if(win == 0){
+			String lose = "You lost";
+			g.setFont(new Font("Ariel",Font.BOLD,60));
+			int WiDtH = g.getFontMetrics().stringWidth(lose);
+			g.drawString(lose, WIDTH/2 -WiDtH/2, HEIGHT/2 - 100);
+		}else if(win == 1){
+			String win = "You won";
+			g.setFont(new Font("Ariel",Font.BOLD,60));
+			int WiDtH = g.getFontMetrics().stringWidth(win);
+			g.drawString(win, WIDTH/2 -WiDtH/2, HEIGHT/2 - 100);
+		}
+	}
+
+
+}
