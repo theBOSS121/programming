@@ -1,0 +1,2 @@
+Ponesrec sm zbrisu use tko da sm uploadu na google play prvo verzijo apk tole sm pa dobiv nazaj iz java decompilerja nism znov dt nazaj v eclipse
+Avoid mapa ma renderer pa avoid class... avoid class je uredu...renderer class je stara verzija...boljsi renderer class je v mapi java/.../renderer.java

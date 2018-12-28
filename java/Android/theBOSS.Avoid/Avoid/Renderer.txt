@@ -1,0 +1,230 @@
+package theBOSS.Avoid;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Paint.Align;
+import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import theBOSS.Avoid.entity.Entity;
+import theBOSS.Avoid.entity.Mob;
+import theBOSS.Avoid.entity.Mob2;
+import theBOSS.Avoid.entity.Mob3;
+import theBOSS.Avoid.entity.Mob4;
+import theBOSS.Avoid.entity.Player;
+import theBOSS.Avoid.graphics.Screen;
+import theBOSS.Avoid.graphics.Sprite;
+
+
+
+//			!!! this is not the most recent one!!!
+
+
+
+public class Renderer extends SurfaceView implements Runnable {
+
+	Typeface font;
+
+	SurfaceHolder ourHolder;
+	Thread ourThread = null;
+	boolean isRunning = false;
+	static Canvas canvas;
+	private int screenWidth = -1, screenHeight = -1;
+	public static final int WIDTH = 600;
+	public static final int HEIGHT = 350;
+	
+	int fps = 0;
+	private Rect screenRect;
+
+	private Bitmap image = Bitmap.createBitmap(WIDTH, HEIGHT, Config.ARGB_8888);
+	private int[] pixels = new int[WIDTH * HEIGHT];
+
+	private Random rand = new Random();
+	
+	Bitmap bbg, blue_ball, green_ball, orange_ball, purple_ball, yellow_ball;
+	public static Sprite bg, bBall, gBall, oBall, pBall, yBall;
+	Screen screen;
+	
+	Player player;
+	
+	private List<Entity> mobs = new ArrayList<Entity>();
+
+	private boolean spawnNewMob = true;
+	private boolean gameOver = false;
+	
+	int time = 0;
+	
+	public Renderer(Context context) {
+		super(context);
+		init(context);
+		isRunning = true;
+		ourHolder = getHolder();
+		ourThread = new Thread(this);
+		ourThread.start();
+	}
+
+	private void init(Context context) {
+		font = Typeface.createFromAsset(context.getAssets(), "font.ttf");
+		screen = new Screen(WIDTH, HEIGHT);
+		bbg = BitmapFactory.decodeResource(getResources(), R.drawable.bg);
+		blue_ball = BitmapFactory.decodeResource(getResources(), R.drawable.blue_ball);
+		green_ball = BitmapFactory.decodeResource(getResources(), R.drawable.green_ball);
+		orange_ball = BitmapFactory.decodeResource(getResources(), R.drawable.orange_ball);
+		purple_ball = BitmapFactory.decodeResource(getResources(), R.drawable.purple_ball);
+		yellow_ball = BitmapFactory.decodeResource(getResources(), R.drawable.yellow_ball);
+		blue_ball = Bitmap.createScaledBitmap(blue_ball, 28, 28, false);
+		green_ball = Bitmap.createScaledBitmap(blue_ball, 28, 28, false);
+		orange_ball = Bitmap.createScaledBitmap(blue_ball, 28, 28, false);
+		purple_ball = Bitmap.createScaledBitmap(blue_ball, 28, 28, false);
+		yellow_ball = Bitmap.createScaledBitmap(blue_ball, 28, 28, false);
+		bg = new Sprite(bbg);
+		bBall = new Sprite(blue_ball);
+		gBall = new Sprite(green_ball);
+		oBall = new Sprite(orange_ball);
+		pBall = new Sprite(purple_ball);
+		yBall = new Sprite(yellow_ball);
+		
+		player = new Player(WIDTH / 2 - bBall.width / 2, HEIGHT / 2 - bBall.height / 2, bBall);
+	}
+
+	public void pause() {
+		isRunning = false;
+		while(true) {
+			try {
+				ourThread.join();
+			}catch(InterruptedException e) {
+				e.printStackTrace();
+			}
+			break;
+		}
+		ourThread = null;
+	}
+
+	public void resume() {
+		isRunning = true;
+		ourThread = new Thread(this);
+		ourThread.start();
+	}
+
+	public void run() {
+		long lastTime = System.nanoTime();
+		long timer = System.currentTimeMillis();
+		final double ns = 1000000000.0 / 60.0;
+		double delta = 0;
+		int frames = 0;
+		requestFocus();
+		while(isRunning) {
+			long now = System.nanoTime();
+			delta += (now - lastTime) / ns;
+			lastTime = now;
+			while(delta >= 1) {
+				update();
+				delta--;
+			}
+			try {
+				render();
+				frames++;
+			}catch(IllegalArgumentException e) {}
+			if(System.currentTimeMillis() - timer > 1000) {
+				timer += 1000;
+				fps = frames;
+				frames = 0;
+			}
+		}
+	}
+
+	private void update() {
+		player.update();
+		for(int i = 0; i < mobs.size(); i++) {
+			mobs.get(i).update();
+		}
+		if(time % (60 * 16) == 0) {
+			spawnNewMob = true;
+		}
+		if(spawnNewMob) {
+			spawn();
+			spawnNewMob = false;
+		}
+		collision();
+		
+		if(gameOver) {
+			restart();
+		}
+		
+		time++;
+	}
+	
+	private void restart() {
+		mobs = new ArrayList<Entity>();
+		gameOver = false;
+		time = 0;
+		spawnNewMob = true;
+	}
+
+	private void collision() {
+		for(int i = 0; i < mobs.size(); i++) {
+			Entity e = mobs.get(i);
+			if(player.x + player.width > e.x && player.x < e.x + e.width && player.y + player.height > e.y && player.y < e.y + e.height && e.hitable && player.hitable) {
+				gameOver = true;
+			}
+		}
+	}
+
+	private void spawn() {
+		int which = rand.nextInt(4);
+		int xPosible = WIDTH - oBall.width;
+		int yPosible = HEIGHT - oBall.height;
+		if(which == 0) {		
+			mobs.add(new Mob(rand.nextInt(xPosible), rand.nextInt(yPosible), oBall));
+		}else if(which == 1) {
+			mobs.add(new Mob2(rand.nextInt(xPosible), rand.nextInt(yPosible), gBall));
+		}else if(which == 2) {
+			mobs.add(new Mob3(rand.nextInt(xPosible), rand.nextInt(yPosible), pBall));
+		}else if(which == 3) {
+			mobs.add(new Mob4(rand.nextInt(xPosible), rand.nextInt(yPosible), yBall, player));
+		}
+	}
+
+	private void render() {
+		if(!ourHolder.getSurface().isValid()) return;
+		canvas = ourHolder.lockCanvas();
+		Paint p = new Paint();
+		p.setARGB(255, 255, 0, 0);
+		p.setTextAlign(Align.CENTER);
+		p.setTypeface(font);
+		p.setTextSize(WIDTH / 10);
+		if(screenWidth == -1 || screenHeight == -1) {
+			screenWidth = canvas.getWidth();
+			screenHeight = canvas.getHeight();
+			screenRect = new Rect(0, 0, screenWidth, screenHeight);
+		}
+		screen.clear();
+		player.render(screen);
+		for(int i = 0; i < mobs.size(); i++) {
+			mobs.get(i).render(screen);
+		}
+
+		for(int i = 0; i < pixels.length; i++) {
+			pixels[i] = screen.pixels[i];
+		}
+
+
+		image.setPixels(pixels, 0, WIDTH, 0, 0, WIDTH, HEIGHT);
+		canvas.drawBitmap(image, null, screenRect, null);
+
+		canvas.drawText("fps: " + fps, screenWidth / 2, HEIGHT / 3, p);
+		canvas.drawText("width: " + bBall.width, screenWidth / 2, HEIGHT / 3 * 2, p);
+		canvas.drawText("height: " + bBall.height, screenWidth / 2, HEIGHT, p);
+		ourHolder.unlockCanvasAndPost(canvas);
+		
+	}
+}
