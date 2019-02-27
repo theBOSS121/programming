@@ -1,0 +1,809 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    scroll-behavior: smooth;
+}
+
+body {
+    /* for no blue on select on mobile phones */
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: transparent;
+    /* IE10+/Edge bug, when tap on text in services in edge strange behavior happened*/
+    -ms-user-select: none; 
+    
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    background: #F0F4F3;
+}
+
+/* commons */
+
+.adown {
+	position:relative;
+	animation:adown .5s .3s ease-in-out both;
+	top:-50px;
+	opacity:0;
+}
+
+.aup {
+	position:relative;
+	animation:aup .5s .3s ease-in-out both;
+	bottom:-50px;
+	opacity:0;
+}
+
+.aleft {
+	position:relative;
+	animation:aleft .5s .3s ease-in-out both;
+	right:-50px;
+	opacity:0;	
+}
+
+.aright {
+	position:relative;
+	animation:aright .5s .3s ease-in-out both;
+	left:-50px;	
+	opacity:0;
+}
+
+@keyframes aright {
+	0%{opacity:0;left:-50px;}
+	100%{opacity:1;left:0;}
+}
+
+@keyframes aleft {
+	0%{opacity:0;right:-50px;}
+	100%{opacity:1;right:0;}
+}
+
+@keyframes adown {
+	0%{opacity:0;top:-50px;}
+	100%{opacity:1;top:0;}
+}
+
+@keyframes aup {
+	0%{opacity:0;bottom:-50px;}
+	100%{opacity:1;bottom:0;}
+}
+
+.btn {
+    text-decoration: none;
+    background: #74C6EE;
+    color:#F0F4F3;
+    width: 220px;
+    padding: 18px 0;
+    display: block;
+    margin: auto;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    border-radius: 5px;
+    transition: .2s;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.btn:hover {
+    background: #57abc5;
+}
+
+h2 {
+   font-size: 2.5rem; 
+   text-transform: uppercase;
+   color:#C1BBA8;
+   position: relative;
+   display: inline-block;
+   padding: 0 40px 0 10px;
+   margin: 40px 0;
+   margin-left: 20px;
+}
+
+h2::before {
+    content:'';
+    position: absolute;
+    width: 100%;
+    height:6px;
+    background:#EFE7CC;
+    bottom: 0;
+    left: 0;
+}
+h2::after {
+    content:'';
+    position: absolute;
+    width: calc(100% - 40px);
+    height:6px;
+    background:#EFBFA8;
+    bottom: -3px;
+    left: 10px;
+}
+
+.info {
+    width: 90%;
+    margin:auto;
+}
+
+section {
+    padding-top: 60px;
+}
+
+.wrapper {
+    max-width: 1000px;
+    width: 100%;
+    margin: auto;
+}
+
+p {
+    font-size: 0.9rem;
+}
+
+/* /////// */
+
+
+header .bar {
+    background: transparent;
+    width: 100%;
+    height: 70px;
+    position: absolute;
+    top: 0px;
+    z-index: 100;
+}
+
+header .bar .logo {
+    position: relative;
+    top: 10px;
+    left:20px;
+    width: 50px;
+    height: 50px;
+    background: url('img/snowflake.png');
+    background-size: 50px;
+    float:left;
+    transition: 0.6s;
+    cursor: pointer;
+}
+
+header .bar .klime-si {
+    color: #74C6EE;
+    text-decoration: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: left top;
+    transform: translate(-50%, -50%);
+    font-size: 1.7rem;
+    font-weight: 900;
+    text-shadow: 1px 1px #6b6b6b,
+                -1px -1px #6b6b6b,
+                -1px 1px #6b6b6b,
+                1px -1px #6b6b6b;
+}
+
+@keyframes logo {
+    0%{
+        transform: rotate(0) translate(-50%, -50%);
+        transform: rotate(0) translate(-50%, -50%);
+    }25%{
+        transform: rotate(360deg) translate(-50%, -50%);
+        top:100px;
+        left: 50%;
+    }48%{
+        left: 150%;
+        opacity: 1;
+    }49% {
+        opacity: 0;
+        left: 150%;
+    }50%{
+        left: -150%;
+        opacity: 0;
+    }51%{
+        opacity: 1;
+    }75%{
+        transform: rotate(360deg) translate(-50%, -50%);
+        top:100px;
+        left: 50%;
+    }100%{
+        transform: rotate(0) translate(-50%, -50%);
+        transform: rotate(0) translate(-50%, -50%); 
+    }
+}
+
+header .bar .open-close-nav {
+    position: relative;
+    top: 10px;
+    right:20px;
+    width: 50px;
+    height: 50px;
+    background: url('img/open-menu.svg');    
+    background-size: 50px;
+    float:right;
+    transition: 0.6s;
+    cursor: pointer;
+    /* bug in safari strange rotation of svg, still strange for the first time */
+    transform-origin: center center;
+    transform-box: fill-box;
+}
+
+header .fixed {
+    position: fixed;
+    top: 0;
+    background: rgba(107, 107, 107, 0.5);
+    transition: top 0.3s;
+}
+
+nav {
+    position: fixed;
+    z-index: 1;
+    background: #57abc5;
+    width: 100%;
+    height: 100vh;
+    right: -100%;
+    transition: 0.8s;
+}
+
+nav .links {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+nav ul {
+    list-style: none;
+}
+
+nav ul li {
+    margin: 20px 0;
+}
+
+nav ul li a {
+    position: relative;
+    transition: 0.2s;
+    text-decoration: none;
+    color: #F0F4F3;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+nav ul li a::before {
+    content: '';
+    position: absolute;
+    bottom:0;
+    left:50%;
+    transform: translateX(-50%);
+    width: 0;
+    height:4px;
+    background:#6b6b6b;
+    transition: 0.2s;
+}
+
+/* hover effect in in @media so it works as plant on mobile phones (safari), */
+/* cuz it makes double tap on safari */
+
+nav ul li a:hover {
+    color:#6b6b6b;
+}
+
+#home {
+    padding-top: 0;
+    width: 100%;
+    height: 100vh;
+}
+
+#home .air-conditioners-bg {
+    width:100%;
+    height: 100vh;
+    background: url(img/bg.jpg);
+    background-size: cover;
+    background-position: center center;
+}
+
+#home .center {
+    position: absolute;
+    top:55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 284px;
+}
+
+#home h1 {
+    color:#74C6EE;
+    margin-bottom: 20px;
+    font-size: 1.9rem;
+    letter-spacing: 1px;
+    position: relative;    
+    text-shadow: 1px 1px #6b6b6b,
+                -1px -1px #6b6b6b,
+                -1px 1px #6b6b6b,
+                1px -1px #6b6b6b;
+    text-decoration: underline;
+}
+
+#home ul {
+    margin-bottom: 30px;
+    list-style: none;
+}
+
+#home ul li {
+    color:#74C6EE;
+    margin-bottom: 10px;
+    padding-left: 8px;
+    font-size: 1.0rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    position: relative;
+    text-shadow: 1px 1px #6b6b6b,
+                -1px -1px #6b6b6b,
+                -1px 1px #6b6b6b,
+                1px -1px #6b6b6b;
+}
+
+#home ul li::before {
+    content: '';
+    background:#74C6EE;
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    top: 8px;
+    left: 0px;
+    border-radius: 50% 50%;
+    box-shadow: 1px 1px #6b6b6b,
+                -1px -1px #6b6b6b,
+                -1px 1px #6b6b6b,
+                1px -1px #6b6b6b;
+}
+
+
+#services .info {
+    color:#6b6b6b;
+    margin-bottom: 40px;
+}
+
+#services .info ul {
+    list-style: none;
+}
+
+#services .info ul li {
+    font-size: 1.2rem;
+    line-height: 1.8rem;
+}
+
+#services .service {
+    background: #e2e9e7;
+    margin-bottom: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+#services .service h3 {
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.1rem;
+    line-height: 80px;
+    color:#e2e9e7;
+    background: #6b6b6b;
+    transition: 0.3s;
+}
+
+#services .service p {
+    padding: 10px;
+    font-size: 0.8rem;
+    line-height: 1.3rem;
+    text-align: center;
+}
+
+#services .info .btn {
+    margin-top: 50px;
+}
+
+#services .service img {
+    width: 100px;
+    opacity: 0.8;
+    display: block;
+    margin: auto;
+}
+
+.typewriter {
+    padding: 60px 0;
+    width: 100%;
+    background: #e2e9e7;
+    margin-top: 100px;
+}
+
+.typewriter img {
+    display: block;
+    width: 300px;
+    margin: auto;
+    opacity: .7;
+    border-radius: 20px;
+}
+
+.typewriter p {
+    text-align: center;
+    font-size: 1.4rem;
+    color:#6b6b6b;
+    margin-top: 30px;
+    line-height: 2.5rem;
+    letter-spacing: 1px;
+}
+
+.typewriter p .cursor {
+    border-right:1px solid #6b6b6b;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+	0%{border-right-color:#6b6b6b;}
+	40%{border-right-color:#6b6b6b;}
+	61%{border-right-color:transparent;}
+	100%{border-right-color:transparent;}
+}
+
+#about-us p {
+    color:#6b6b6b;
+    line-height: 1.8rem;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+#about-us .btn {
+    margin-top: 80px;
+}
+
+#contacts {
+    margin-bottom: 40px;
+}
+
+#contacts p {
+    line-height: 2.4rem;
+    letter-spacing: 1px;
+}
+
+#contacts .grey {
+    color:#6b6b6b;
+    float: left;
+}
+
+#contacts .i {
+    color: #EFBFA8; 
+}
+
+#contacts img {
+    width: 280px;
+    display: block;
+    margin: 80px auto;
+}
+
+#send-message {
+    background: #e2e9e7;
+    padding: 70px 0;
+}
+
+#send-message .input-wrap {
+    position: relative;
+    width: 90%;
+    margin: auto;
+    margin-bottom: 40px;
+}
+
+#send-message .input-wrap input{
+    height: 60px;
+    width: 100%;
+    background: #f6f6f6;
+}
+
+#send-message .input-wrap input[type='submit'] {
+    background: #74C6EE;
+}
+
+#send-message .input-wrap input[type='submit']:focus {
+    border:none;
+}
+
+#send-message .input-wrap input[type='submit']:hover {
+    background: #57abc5;
+}
+
+#send-message .input-wrap textarea{
+    resize: none;
+    height: 180px;
+    width: 100%;
+    background: #f6f6f6;
+}
+
+#send-message .input-wrap span{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 0.95rem;
+    color:#777;
+    transition: 0.2s;
+}
+
+#send-message .input-wrap input:focus ~ span,
+#send-message .input-wrap input:not(:focus):valid ~ span,
+#send-message .input-wrap textarea:focus ~ span,
+#send-message .input-wrap textarea:not(:focus):valid ~ span {
+    top: -20px;
+    left: 0px;
+    color:#57abc5;
+}
+
+#send-message .input-wrap input, #send-message .input-wrap textarea {
+    border:none;
+    border-radius: 4px;
+    padding: 20px;
+}
+
+#send-message .input-wrap input:focus, #send-message .input-wrap textarea:focus {
+    outline: none;
+    border:2px solid #57abc5;
+}
+
+#send-message .return {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2rem;
+}
+
+@media (pointer: fine) {
+    nav ul li a:hover::before {
+        width: 100%;
+    }    
+}
+
+@media (min-width:400px) {
+    header .bar .klime-si {
+        font-size: 2.5rem;
+    }
+
+    #home .center {
+        width: 353px;
+    }
+
+    #home h1 {
+        font-size: 2.4rem;
+    }
+    
+    #home ul li {
+        font-size: 1.2rem;
+        padding-left: 9px;
+    }
+
+    #home ul li::before {
+        width: 5px;
+        height: 5px;
+        top: 11px;
+    }
+
+    p {
+        font-size: 1.2rem;
+    }
+
+    .typewriter p {
+        font-size: 1.5rem;
+    }
+    
+    #services .service h3 {
+        font-size: 1.5rem;
+    }
+    
+    #services .service p {
+        padding: 10px;
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #services .service img {
+        width: 150px;
+    }
+    
+}
+
+@media (min-width:650px) {
+    header .bar .klime-si {
+        font-size: 3rem;
+    }
+
+    #home .center {
+        width: 545px;
+    }
+    
+    #home h1 {
+        font-size: 3.7rem;
+        margin-bottom: 20px;
+    }
+
+    #home ul li {
+        font-size: 2.0rem;
+        padding-left: 10px;
+    }
+
+    #home ul li::before {
+        top: 18px;
+        width: 6px;
+        height: 6px;
+    }
+    
+    p {
+        font-size: 1.4rem;
+    }
+
+    .typewriter p {
+        font-size: 2.5rem;
+        line-height: 3.2rem;
+        margin: 80px auto 40px;
+    }
+    
+    #services .service h3 {
+        font-size: 2rem;
+        text-align: left;
+        padding-left: 25px;
+    }
+    
+    #services .service p {
+        padding: 25px;
+        font-size: 1.2rem;
+        line-height: 1.8rem;
+        text-align: left;
+    }
+
+    #services .service img {
+        width: 200px;
+    }
+    
+}
+
+@media (min-width:1000px) {
+    header .bar {
+        top: 40px;
+    }
+    header .bar .klime-si {
+        font-size: 3.5rem;
+    }
+
+    nav {
+        width: 300px;
+        border-left: 5px solid #6b6b6b;
+    }
+    
+    nav .links {
+        text-align: left;
+        top: 40%;
+    }
+    
+    #home .center {
+        width: 80%;
+    }
+
+    #home .left {
+        margin-top: 150px;
+        float: left;
+        width: 509px;
+    }
+
+    #home .right {
+        position: absolute;
+        right: 0;
+        top: 55%;
+    }
+    
+    #home h1 {
+        font-size: 3.5rem;
+        margin-bottom: 30px;
+    }
+    
+    #home ul li {
+        font-size: 1.8rem;
+        padding-left: 15px;
+    }
+
+    #home ul li::before {
+        top: 14px;
+        width: 8px;
+        height: 8px;
+    }
+
+    #home .right .btn {
+        width: 250px;
+    }
+
+    #contacts h2 {
+        margin-bottom: 50px;
+    }
+
+    #contacts p {
+        font-size: 1.4rem;
+        line-height: 3.4rem;
+    }
+
+    #contacts img {
+        width: 400px;
+        margin: 100px auto;
+    }
+
+    .typewriter img {
+        width: 400px;
+    }
+
+    .typewriter p {
+        font-size: 4rem;
+        line-height: 5rem;
+        margin: 100px auto 60px;
+    }
+
+    #services .service h3 {
+        font-size: 2.2rem;
+        text-align: left;
+        padding-left: 25px;
+    }
+    
+    #services .service p {
+        padding: 25px;
+        font-size: 1.4rem;
+        line-height: 2.0rem;
+        text-align: left;
+    }
+    
+}
+
+@media (min-width:1000px) and (min-height:700px) {    
+    #home .left {
+        margin-top: 100px;
+        float: left;
+        width: 509px;
+    }
+
+    #home .right {
+        position: absolute;
+        right: 0;
+        top: 45%;
+    }
+}
+
+@media (min-width:1400px) {
+    #home .left {
+        margin-top: 150px;
+        float: left;
+        width: 650px;
+    }
+
+    #home .right {
+        position: absolute;
+        right: 0;
+        top: 55%;
+        /* transform: translateY(-50%); */
+    }
+    
+    #home h1 {
+        font-size: 4.5rem;
+        margin-bottom: 60px;
+    }
+
+    #home ul li {
+        font-size: 2.4em;
+        padding-left: 19px;
+    }
+
+    #home ul li::before {
+        top: 21px;
+        width: 9px;
+        height: 9px;
+    }
+
+    #home .right .btn {
+        width: 300px;
+    }
+    
+}
+
+@media (max-height:800px) {
+    nav .links {
+        top: 50%;
+    }
+}
